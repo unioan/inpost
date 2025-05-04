@@ -1,0 +1,33 @@
+const axios = require('axios')
+const { createDBUser } = require('../../models/boxes.model')
+
+async function createUser(req, res) {
+ try {
+  await createDBUser(req.body)
+  res.status(201).json({ message: 'User created', user: { ...req.body } });
+ } catch (error) {
+  switch (error.code) {
+   case 400:
+    res.status(400).json({ message: 'Please, choose different name', error });
+    break;
+   default:
+    res.status(500).json({ message: 'ERROR when creating user ', error });
+  }
+ }
+}
+
+function createMailbox(req, res) {
+
+}
+
+function getToken() {
+
+}
+
+function generateCredentials() {
+
+}
+
+module.exports = {
+ createUser
+}

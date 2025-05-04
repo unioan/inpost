@@ -1,8 +1,9 @@
 const express = require('express')
 const app = express()
+const boxesRouter = require('./routes/boxes/boxes.router')
 
-app.get('/', (req, res) => {
- res.send('<h1>Hello world 🚀</h1>')
-})
+app.use(express.json());
+
+app.use('/boxes', boxesRouter)
 
 module.exports = app
