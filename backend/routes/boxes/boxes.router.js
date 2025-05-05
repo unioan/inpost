@@ -1,17 +1,11 @@
 const express = require('express')
 const {
- createUser,
  createMailbox
 } = require('./boxes.controller')
 const boxesRouter = express.Router()
 
 // создать ящик
-// неправильно это user
-boxesRouter.post('/', createUser) // {address, pass}
-
-// создать ящик по нормальному
-boxesRouter.post('/new', createMailbox)
-
+boxesRouter.post('/', createMailbox) 
 
 // получить все ящики
 //boxesRouter.get('/')

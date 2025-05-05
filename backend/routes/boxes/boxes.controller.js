@@ -1,31 +1,10 @@
 const { getDomain } = require('../../services/mailtm')
-const {
- createDBUser,
- generateMailboxCredentials
-} = require('../../models/boxes.model')
-
-async function createUser(req, res) {
- try {
-  await createDBUser(req.body)
-  res.status(201).json({ message: 'User created', user: { ...req.body } });
- } catch (error) {
-  switch (error.code) {
-   case 400:
-    res.status(400).json({ message: 'Please, choose different name', error });
-    break;
-   default:
-    res.status(500).json({ message: 'ERROR when creating user ', error });
-  }
- }
-}
+const { generateMailboxCredentials } = require('../../models/boxes.model')
 
 async function createMailbox(req, res) {
  // запрос доступных доменов
  // https://api.mail.tm/domains axios
  const domain = await getDomain()
-
- console.log(domain)
-
 
  // генерим
  // address_username@полученыйДомен
@@ -41,6 +20,9 @@ async function createMailbox(req, res) {
 
  // Создаем Mailbox создаем референс на него у User
  res.status(200).json({ message: 'allrighty then' })
+
+ // после создания почтового ящика и получения токена нужно сохранить референс к нему в User. 
+ // Как это сделать? Нужно вызвать API /users внутри /boxes
 }
 
 function getToken() {
@@ -52,7 +34,5 @@ function generateCredentials() {
 }
 
 module.exports = {
- getDomain,
- createUser,
  createMailbox
 }
