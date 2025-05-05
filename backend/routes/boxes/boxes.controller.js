@@ -1,5 +1,8 @@
-const axios = require('axios')
-const { createDBUser } = require('../../models/boxes.model')
+const { getDomain } = require('../../services/mailtm')
+const {
+ createDBUser,
+ generateMailboxCredentials
+} = require('../../models/boxes.model')
 
 async function createUser(req, res) {
  try {
@@ -16,8 +19,28 @@ async function createUser(req, res) {
  }
 }
 
-function createMailbox(req, res) {
+async function createMailbox(req, res) {
+ // запрос доступных доменов
+ // https://api.mail.tm/domains axios
+ const domain = await getDomain()
 
+ console.log(domain)
+
+
+ // генерим
+ // address_username@полученыйДомен
+ // password
+ const creds = generateMailboxCredentials('opanki.com')
+ console.log('DEBUG: generateMailboxCredentials', creds)
+
+ // создаем аккаунт
+ // https://api.mail.tm/accounts
+
+ // получаем токен
+ // https://api.mail.tm/token
+
+ // Создаем Mailbox создаем референс на него у User
+ res.status(200).json({ message: 'allrighty then' })
 }
 
 function getToken() {
@@ -29,5 +52,7 @@ function generateCredentials() {
 }
 
 module.exports = {
- createUser
+ getDomain,
+ createUser,
+ createMailbox
 }
