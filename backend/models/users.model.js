@@ -13,10 +13,17 @@ async function createDBUser(credentials) {
  await user.save()
 }
 
+async function addMailboxToUser(userId, mailbox) {
+ return await User.findOneAndUpdate({ login: 'jepe' }, {
+  $push: { active_mailboxes: mailbox._id }
+ })
+}
+
 async function uniqueLogin(login) {
  return User.find({ login })
 }
 
 module.exports = {
- createDBUser
+ createDBUser,
+ addMailboxToUser
 }

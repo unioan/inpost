@@ -1,6 +1,13 @@
 const { randomBytes } = require('crypto');
+const Mailbox = require('./Mailbox')
 
-function generateMailboxCredentials(domain) {
+async function createMailboxDB(data) {
+ const mailbox = Mailbox(data)
+ await mailbox.save()
+ return mailbox
+}
+
+function generateAddressAndPassword(domain) {
  return {
   address: `${randomString(8)}@${domain}`,
   password: `${randomString(12)}`
@@ -17,5 +24,6 @@ function randomString(length) {
 }
 
 module.exports = {
- generateMailboxCredentials
+ createMailboxDB,
+ generateAddressAndPassword
 }

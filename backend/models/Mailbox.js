@@ -10,10 +10,14 @@ const mailboxSchema = mongoose.Schema({
   required: true
  },
  isActive: {
-  type: Bool,
-  required: true
+  type: Boolean,
+  default: true
  },
  id: {
+  type: String, // нужен для запросов
+  required: true
+ },
+ mailboxAddress: {
   type: String, // нужен для запросов
   required: true
  }

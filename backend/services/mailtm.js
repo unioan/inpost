@@ -9,9 +9,14 @@ async function getDomain() {
  return domain;
 }
 
-async function getToken(email, password) {
- const response = await axios.post(`${BASE_URL}/token`, { email, password });
- return response.data;
+async function createAccount(credentials) {
+ const response = await axios.post(`${BASE_URL}/accounts`, { ...credentials });
+ return response;
+}
+
+async function getToken(credentials) {
+ const response = await axios.post(`${BASE_URL}/token`, { ...credentials });
+ return response.data.token;
 }
 
 async function getMessages(token) {
@@ -23,6 +28,7 @@ async function getMessages(token) {
 
 module.exports = {
  getDomain,
+ createAccount,
  getToken,
  getMessages,
 };
