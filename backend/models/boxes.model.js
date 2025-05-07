@@ -7,9 +7,9 @@ async function createMailboxDB(data) {
  return mailbox
 }
 
-function generateAddressAndPassword(domain) {
+function generateMailboxAddressAndPassword(login, domain) {
  return {
-  address: `${randomString(8)}@${domain}`,
+  address: `${randomString(8)}_${login}@${domain}`,
   password: `${randomString(12)}`
  }
 }
@@ -25,5 +25,5 @@ function randomString(length) {
 
 module.exports = {
  createMailboxDB,
- generateAddressAndPassword
+ generateMailboxAddressAndPassword
 }
