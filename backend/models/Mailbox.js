@@ -13,7 +13,7 @@ const mailboxSchema = mongoose.Schema({
   type: Boolean,
   default: true
  },
- id: {
+ userId: {
   type: String, // нужен для запросов
   required: true
  },

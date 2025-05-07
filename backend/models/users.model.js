@@ -15,9 +15,10 @@ async function createDBUser(credentials) {
 }
 
 async function addMailboxToUser(userId, mailbox) {
- return await User.findOneAndUpdate({ login: 'jepe' }, {
+ const updatedUser = await User.findByIdAndUpdate(userId, {
   $push: { active_mailboxes: mailbox._id }
  })
+ return updatedUser
 }
 
 async function uniqueLogin(login) {

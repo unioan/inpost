@@ -23,7 +23,7 @@ async function createMailbox(req, res) {
  // const mailboxAddress = account.data.address
  // const activation_date = new Date(account.data.createdAt)
 
- const id = '681a355699071dca790804ce'
+ const userId = req.body.userId
  const mailboxAddress = 'opanki-again1@chefalicious.com'
  const activation_date = new Date('2025-05-06T16:14:14+00:00')
 
@@ -31,17 +31,17 @@ async function createMailbox(req, res) {
  // https://api.mail.tm/token
  const token = await getToken(creds)
 
- const mailbox = await createMailboxDB({ id, mailboxAddress, activation_date, token })
+ const mailbox = await createMailboxDB({ userId, mailboxAddress, activation_date, token })
 
  console.log('DEBUG: token', token)
  console.log('DEBUG: mailbox', mailbox)
 
- const result = await addMailboxToUser('6818f0f1491fcdde5f7075f8', mailbox)
+ const result = await addMailboxToUser(userId, mailbox)
 
  console.log('DEBUG: result', result)
 
  // Создаем Mailbox создаем референс на него у User
- res.status(200).json({ message: 'allrighty then' })
+ res.status(200).json({ message: 'allrighty then', result })
 
  // после создания почтового ящика и получения токена нужно сохранить референс к нему в User. 
  // Как это сделать? Нужно вызвать API /users внутри /boxes ?
