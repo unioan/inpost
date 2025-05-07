@@ -11,6 +11,7 @@ async function createDBUser(credentials) {
 
  const user = new User({ ...credentials })
  await user.save()
+ return user
 }
 
 async function addMailboxToUser(userId, mailbox) {
