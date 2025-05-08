@@ -1,4 +1,5 @@
 const axios = require('axios');
+const AppError = require('../error/AppError')
 
 const BASE_URL = 'https://api.mail.tm';
 
@@ -10,8 +11,15 @@ async function getDomain() {
 }
 
 async function createAccount(credentials) {
- const response = await axios.post(`${BASE_URL}/accounts`, { ...credentials });
- return response;
+ try {
+  const result = await axios.post(`${BASE_URL}/accounts`, { ...credentials });
+  return { account: result.data, error: null };
+ } catch (err) {
+  return { 
+   account: null,
+   error: new AppError('mailtm', err.response.status, `${err.response.data.detail}`) 
+  }
+ }
 }
 
 async function getToken(credentials) {

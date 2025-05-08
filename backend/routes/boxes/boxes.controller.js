@@ -12,10 +12,14 @@ async function createMailbox(req, res) {
  // генерим address_username@domain => {address, password}
  const creds = generateMailboxAddressAndPassword(login, domain)
 
+ console.log('DEBUG creds:', creds)
+
  // создаем аккаунт https://api.mail.tm/accounts
- const account = await createAccount(creds)
- const mailboxAddress = account.data.address
- const activation_date = new Date(account.data.createdAt)
+ const { error, account } = await createAccount(creds)
+ if (error) { throw error }
+
+ const mailboxAddress = account.address
+ const activation_date = new Date(account.createdAt)
 
  // получаем токен https://api.mail.tm/token
  const token = await getToken(creds)
