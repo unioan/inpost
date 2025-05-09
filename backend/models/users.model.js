@@ -1,4 +1,5 @@
 const User = require('./User')
+const Mailbox = require('./Mailbox')
 
 async function createDBUser(credentials) {
  const existingUser = await uniqueLogin(credentials.login);
@@ -25,8 +26,17 @@ async function addMailboxToUser(userId, mailbox) {
 }
 
 async function getUsersActiveMailboxes(userId) {
- const activeMailboxes = User.findById(userId, {active_mailboxes: 1})
+ const activeMailboxes = User.findById(userId, { active_mailboxes: 1 })
  return activeMailboxes
+}
+
+async function makeMailboxInactive(userId, mailboxId) {
+ const user = await User.findById(userId);
+
+ user.active_mailboxes.pull(mailboxId);
+ user.inactive_mailboxes.addToSet(mailboxId); 
+
+ await user.save();
 }
 
 async function uniqueLogin(login) {
@@ -36,5 +46,6 @@ async function uniqueLogin(login) {
 module.exports = {
  createDBUser,
  addMailboxToUser,
- getUsersActiveMailboxes
+ getUsersActiveMailboxes,
+ makeMailboxInactive
 }

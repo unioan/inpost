@@ -9,7 +9,8 @@ const {
 } = require('../../models/boxes.model')
 const {
  addMailboxToUser,
- getUsersActiveMailboxes
+ getUsersActiveMailboxes,
+ makeMailboxInactive
 } = require('../../models/users.model')
 const AppError = require('../../error/AppError')
 
@@ -50,6 +51,16 @@ async function createMailbox(req, res) {
  res.status(201).json({ message: 'allrighty then', user })
 }
 
+async function deactivateMailbox(req, res) {
+ const { userId, mailboxId } = req.body
+ console.log('DEBUG userId, mailboxId', userId, mailboxId)
+ await makeMailboxInactive(userId, mailboxId)
+ res.status(200).json({message: 'got it'})
+}
+
+// (mailboxId, userId) переместить удалить mailboxId из User.userId, добавить
+
 module.exports = {
- createMailbox
+ createMailbox,
+ deactivateMailbox
 }

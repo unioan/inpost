@@ -2,12 +2,14 @@ const express = require('express')
 const tryCatch = require('../../error/tryCatch')
 const {
  createMailbox,
- getActiveMailboxes
+ deactivateMailbox
 } = require('./boxes.controller')
 const boxesRouter = express.Router()
 
 // создать ящик
 boxesRouter.post('/', tryCatch(createMailbox)) 
+
+boxesRouter.post('/deactivateMailbox', tryCatch(deactivateMailbox)) 
 
 // получить все ящики
 //boxesRouter.get('/')
