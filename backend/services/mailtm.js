@@ -4,10 +4,24 @@ const AppError = require('../error/AppError')
 const BASE_URL = 'https://api.mail.tm';
 
 async function getDomain() {
- const response = await axios.get(`${BASE_URL}/domains`);
- const domain = response.data['hydra:member'][0].domain
- console.log('DEBUG: domain', domain)
- return domain;
+ let error
+ try {
+  const response = await axios.get(`${BASE_URL}/domains`);
+  const domain = response.data['hydra:member'][0].domain
+  if (!domain) {
+   return {
+    domain,
+    errorGetDomain: new AppError('mailtm', 500, `No domains available, mail.tm returned: ${domain} (no domain)`)
+   }
+  }
+  return { domain, errorGetDomain: null }
+ } catch (err) {
+  return {
+   domain: null,
+   errorGetDomain: new AppError('mailtm', err.response.status, `${err.response.data.detail}`)
+  }
+ }
+
 }
 
 async function createAccount(credentials) {
@@ -15,9 +29,9 @@ async function createAccount(credentials) {
   const result = await axios.post(`${BASE_URL}/accounts`, { ...credentials });
   return { account: result.data, error: null };
  } catch (err) {
-  return { 
+  return {
    account: null,
-   error: new AppError('mailtm', err.response.status, `${err.response.data.detail}`) 
+   error: new AppError('mailtm', err.response.status, `${err.response.data.detail}`)
   }
  }
 }

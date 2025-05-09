@@ -6,8 +6,8 @@ const AppError = require('../../error/AppError')
 async function createMailbox(req, res) {
  // запрос доступных доменов https://api.mail.tm/domains axios
  const { login, userId } = req.body
- const domain = await getDomain()
- if (!domain) { throw new AppError('mailtm', 500, `mail.tm returned: ${domain} (no domain)`) }
+ const { domain, errorGetDomain } = await getDomain()
+ if (errorGetDomain) { throw errorGetDomain }
 
  // генерим address_username@domain => {address, password}
  const creds = generateMailboxAddressAndPassword(login, domain)
