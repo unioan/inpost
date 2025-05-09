@@ -27,18 +27,24 @@ async function getDomain() {
 async function createAccount(credentials) {
  try {
   const result = await axios.post(`${BASE_URL}/accounts`, { ...credentials });
-  return { account: result.data, error: null };
+  return { account: result.data, errorCreateAccount: null };
  } catch (err) {
   return {
    account: null,
-   error: new AppError('mailtm', err.response.status, `${err.response.data.detail}`)
+   errorCreateAccount: new AppError('mailtm', err.response.status, `${err.response.data.detail}`)
   }
  }
 }
 
 async function getToken(credentials) {
- const response = await axios.post(`${BASE_URL}/token`, { ...credentials });
- return response.data.token;
+ try {
+  const response = await axios.post(`${BASE_URL}/token`, { ...credentials });
+  return { token: response.data.token, errorGetToken: null }
+ } catch (err) {
+  return { 
+   token: null, 
+   errorGetToken: new AppError('mailtm', err.response.status, `${err.response.data.detail}`) }
+ }
 }
 
 async function getMessages(token) {
