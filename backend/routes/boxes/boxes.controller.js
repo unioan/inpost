@@ -1,11 +1,28 @@
-const { getDomain, createAccount, getToken } = require('../../services/mailtm')
-const { createMailboxDB, generateMailboxAddressAndPassword } = require('../../models/boxes.model')
-const { addMailboxToUser } = require('../../models/users.model')
+const {
+ getDomain,
+ createAccount,
+ getToken
+} = require('../../services/mailtm')
+const {
+ createMailboxDB,
+ generateMailboxAddressAndPassword
+} = require('../../models/boxes.model')
+const {
+ addMailboxToUser,
+ getUsersActiveMailboxes
+} = require('../../models/users.model')
 const AppError = require('../../error/AppError')
 
 async function createMailbox(req, res) {
  // запрос доступных доменов https://api.mail.tm/domains axios
  const { login, userId } = req.body
+
+ // проверить сколько активных ящиков
+ const { active_mailboxes: userActiveBoxes } = await getUsersActiveMailboxes(userId)
+ if (userActiveBoxes.length >= 2) {
+  throw new AppError('app', 403, 'You are not allowed to have more than 2 active mailboxes')
+ }
+
  const { domain, errorGetDomain } = await getDomain()
  if (errorGetDomain) { throw errorGetDomain }
 

@@ -24,11 +24,17 @@ async function addMailboxToUser(userId, mailbox) {
  return updatedUser
 }
 
+async function getUsersActiveMailboxes(userId) {
+ const activeMailboxes = User.findById(userId, {active_mailboxes: 1})
+ return activeMailboxes
+}
+
 async function uniqueLogin(login) {
  return User.find({ login })
 }
 
 module.exports = {
  createDBUser,
- addMailboxToUser
+ addMailboxToUser,
+ getUsersActiveMailboxes
 }
