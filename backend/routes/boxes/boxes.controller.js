@@ -51,6 +51,7 @@ async function createMailbox(req, res) {
  res.status(201).json({ message: 'allrighty then', user })
 }
 
+// УДАЛИТЬ вместе с route, нам нужна только makeMailboxInactive 
 async function deactivateMailbox(req, res) {
  const { userId, mailboxId } = req.body
  console.log('DEBUG userId, mailboxId', userId, mailboxId)

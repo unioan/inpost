@@ -1,4 +1,11 @@
-const { createDBUser } = require('../../models/users.model')
+const {
+  createDBUser,
+  getUsersActiveMailboxes
+} = require('../../models/users.model')
+const { differenceInMinutes, addMinutes } = require('date-fns');
+require('dotenv').config()
+
+const MAILBOX_EXPIRATION_TIME = process.env.MAILBOX_EXPIRATION_TIME
 
 async function createUser(req, res) {
   try {
@@ -15,6 +22,36 @@ async function createUser(req, res) {
   }
 }
 
+// /users/:userId
+// Выделить проверку, обработку ящиков в отдельную функцию
+async function getUser(req, res) {
+  const { userId } = req.params
+  const { active_mailboxes: activeBoxes } = await getUsersActiveMailboxes(userId)
+
+  activeBoxes.forEach(box => {
+    const { activation_date } = box
+    console.log('DEBUG activation_date:', activation_date)
+    const now = new Date();
+    const minutesPast = differenceInMinutes(now, activation_date)
+    const expirationDate = addMinutes(activation_date, MAILBOX_EXPIRATION_TIME)
+
+    if (minutesPast > MAILBOX_EXPIRATION_TIME) {
+      console.log('DEBUG expiration date', expirationDate)
+      console.log('DEBUG minutesPast', minutesPast)
+    } else {
+      console.log('DEBUG expiration date', expirationDate)
+      console.log('DEBUG minutesPast', minutesPast)
+    }
+
+    console.log('DEBUG minutesPast:', minutesPast)
+  });
+
+  console.log('UTC time', new Date().toISOString())
+
+  res.status(200).json({ message: 'getUser returned' })
+}
+
 module.exports = {
-  createUser
+  createUser,
+  getUser
 }
