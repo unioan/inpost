@@ -26,6 +26,8 @@ async function createUser(req, res) {
 // Выделить проверку, обработку ящиков в отдельную функцию
 async function getUser(req, res) {
   const { userId } = req.params
+
+  // обновить
   const { active_mailboxes: activeBoxes } = await getUsersActiveMailboxes(userId)
 
   activeBoxes.forEach(box => {
@@ -49,6 +51,10 @@ async function getUser(req, res) {
   console.log('UTC time', new Date().toISOString())
 
   res.status(200).json({ message: 'getUser returned' })
+}
+
+async function name(params) {
+  
 }
 
 module.exports = {

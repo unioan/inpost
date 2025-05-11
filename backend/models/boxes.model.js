@@ -3,7 +3,7 @@ const Mailbox = require('./Mailbox')
 
 async function createMailboxDB(data) {
  const mailbox = Mailbox(data)
- await mailbox.save()
+  await mailbox.save()
  return mailbox
 }
 
