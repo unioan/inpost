@@ -26,17 +26,13 @@ async function createMailbox(req, res) {
  // создать пользователя в MailboxList
  await createMailListIfNotExist(userId)
 
- // ⚠️ пройтись по всем activeMailboxes
+ // обновить переред проверкой лоичества => вернет актуальные активные
+ const userActiveMailboxes = await updateActiveMailboxesStatus(userId)
+ console.log('DEBUG updateActiveMailboxesStatus:', userActiveMailboxes)
 
- // проверить количество активных ящиков
- const activeMailboxes = await getActiveMailboxes(userId)
- console.log('DEBUG getActiveMailboxes:', activeMailboxes)
-
- // проверить сколько активных ящиков
- // const { active_mailboxes: userActiveBoxes } = await getUsersActiveMailboxes(userId)
- // if (activeMailboxes.length >= MAILBOX_MAX_ACTIVE) {
- //  throw new AppError('app', 403, 'You are not allowed to have more than 2 active mailboxes')
- // }
+ if (userActiveMailboxes.length >= MAILBOX_MAX_ACTIVE) {
+  throw new AppError('app', 403, 'You are not allowed to have more than 2 active mailboxes')
+ }
 
  const { domain, errorGetDomain } = await getDomain()
  if (errorGetDomain) { throw errorGetDomain }
@@ -60,7 +56,7 @@ async function createMailbox(req, res) {
 
  // добавляем в MailboxList в активные
  const addMailboxResult = await addMailboxToActive(userId, mailbox)
- console.log('DEBUG addMailboxResult: ', addMailboxResult)
+ // console.log('DEBUG addMailboxResult: ', addMailboxResult)
 
  // возвращаем User
  res.status(201).json({ message: 'allrighty then' })

@@ -1,4 +1,5 @@
 const MailboxList = require('./MailboxList')
+const Mailbox = require('./Mailbox')
 const { differenceInMinutes } = require('date-fns');
 
 const MAILBOX_EXPIRATION_TIME = process.env.MAILBOX_EXPIRATION_TIME
@@ -27,10 +28,20 @@ async function updateActiveMailboxesStatus(userId) {
  }
 
  await mailboxList.save()
+
+ return mailboxList.activeMailboxes
 }
 
 async function getMailboxesList(userId) {
- return await MailboxList.findById(userId)
+ const mailbox = await MailboxList.findById(userId)
+ mailbox.inactiveMailboxes.sort((mailbox1, mailbox2) => {
+  return new Date(mailbox2.activation_date) - new Date(mailbox1.activation_date)
+ })
+ mailbox.activeMailboxes?.sort((mailbox1, mailbox2) => {
+  return new Date(mailbox2.activation_date) - new Date(mailbox1.activation_date)
+ })
+
+ return mailbox
 }
 
 async function getActiveMailboxes(userId) {
