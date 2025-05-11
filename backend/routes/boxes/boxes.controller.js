@@ -17,6 +17,7 @@ const {
  createMailListIfNotExist,
  getActiveMailboxes,
  addMailboxToActive,
+ getMailboxesList,
  updateActiveMailboxesStatus
 } = require('../../models/mailboxList.model')
 const AppError = require('../../error/AppError')
@@ -74,7 +75,8 @@ async function createMailbox(req, res) {
 async function getMailboxes(req, res) {
  const { userId } = req.params
  await updateActiveMailboxesStatus(userId)
- res.status(200).json({ message: 'getMailboxes returned' })
+ const mailboxList = await getMailboxesList(userId)
+ res.status(200).json(mailboxList)
 }
 
 // УДАЛИТЬ вместе с route, нам нужна только makeMailboxInactive 

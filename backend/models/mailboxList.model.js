@@ -7,15 +7,6 @@ async function createMailListIfNotExist(userId) {
  return await MailboxList.findByIdAndUpdate(userId, { userId }, { upsert: true, new: true })
 }
 
-async function getMailboxes(userId) {
- return await MailboxList.findById(userId)
-}
-
-async function getActiveMailboxes(userId) {
- const { activeMailboxes } = await MailboxList.findById(userId, { activeMailboxes: 1 })
- return activeMailboxes
-}
-
 async function addMailboxToActive(userId, mailbox) {
  return await MailboxList.findByIdAndUpdate(userId, { $push: { activeMailboxes: mailbox } })
 }
@@ -29,17 +20,28 @@ async function updateActiveMailboxesStatus(userId) {
   const minutesPast = differenceInMinutes(now, activation_date);
 
   if (minutesPast > MAILBOX_EXPIRATION_TIME) {
+   mailbox.isActive = false
    mailboxList.activeMailboxes.pull(mailbox._id);
    mailboxList.inactiveMailboxes.addToSet(mailbox);
-  } 
+  }
  }
 
  await mailboxList.save()
 }
 
+async function getMailboxesList(userId) {
+ return await MailboxList.findById(userId)
+}
+
+async function getActiveMailboxes(userId) {
+ const { activeMailboxes } = await MailboxList.findById(userId, { activeMailboxes: 1 })
+ return activeMailboxes
+}
+
 module.exports = {
  createMailListIfNotExist,
- getActiveMailboxes,
  addMailboxToActive,
- updateActiveMailboxesStatus
+ updateActiveMailboxesStatus,
+ getMailboxesList,
+ getActiveMailboxes
 }
