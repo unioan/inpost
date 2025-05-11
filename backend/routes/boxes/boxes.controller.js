@@ -9,11 +9,6 @@ const {
  generateMailboxAddressAndPassword
 } = require('../../models/boxes.model')
 const {
- addMailboxToUser,
- getUsersActiveMailboxes,
- makeMailboxInactive
-} = require('../../models/users.model')
-const {
  createMailListIfNotExist,
  getActiveMailboxes,
  addMailboxToActive,
@@ -63,10 +58,9 @@ async function createMailbox(req, res) {
  // создаем Mailbox
  const mailbox = await createMailboxDB({ userId, mailboxAddress, activation_date, token })
 
+ // добавляем в MailboxList в активные
  const addMailboxResult = await addMailboxToActive(userId, mailbox)
  console.log('DEBUG addMailboxResult: ', addMailboxResult)
- // добавляем в active_mailboxes в User
- // const user = await addMailboxToUser(userId, mailbox)
 
  // возвращаем User
  res.status(201).json({ message: 'allrighty then' })
@@ -79,18 +73,7 @@ async function getMailboxes(req, res) {
  res.status(200).json(mailboxList)
 }
 
-// УДАЛИТЬ вместе с route, нам нужна только makeMailboxInactive 
-async function deactivateMailbox(req, res) {
- const { userId, mailboxId } = req.body
- console.log('DEBUG userId, mailboxId', userId, mailboxId)
- await makeMailboxInactive(userId, mailboxId)
- res.status(200).json({ message: 'got it' })
-}
-
-// (mailboxId, userId) переместить удалить mailboxId из User.userId, добавить
-
 module.exports = {
  createMailbox,
- getMailboxes,
- deactivateMailbox
+ getMailboxes
 }

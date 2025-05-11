@@ -3,7 +3,6 @@ const tryCatch = require('../../error/tryCatch')
 const {
  createMailbox,
  getMailboxes,
- deactivateMailbox
 } = require('./boxes.controller')
 const boxesRouter = express.Router()
 
