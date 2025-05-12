@@ -1,9 +1,9 @@
 const mongoose = require('mongoose')
 
 const mailboxSchema = mongoose.Schema({
- activation_date: {
+ expiresAt: {
   type: Date,
-  required: true,
+  required: true, 
  },
  token: {
   type: String,

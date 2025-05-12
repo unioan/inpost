@@ -6,18 +6,22 @@ const {
 } = require('../../services/mailtm')
 const {
  createMailboxDB,
- generateMailboxAddressAndPassword
+ generateMailboxAddressAndPassword,
+ renameFieldCreateAt
 } = require('../../models/boxes.model')
 const {
  createMailListIfNotExist,
  getActiveMailboxes,
  addMailboxToActive,
  getMailboxesList,
- updateActiveMailboxesStatus
+ updateActiveMailboxesStatus,
+ makeExpiresAtMailboxesList
 } = require('../../models/mailboxList.model')
 const AppError = require('../../error/AppError')
+const { addMinutes } = require('date-fns');
 
 const MAILBOX_MAX_ACTIVE = process.env.MAILBOX_MAX_ACTIVE || 2
+const MAILBOX_EXPIRATION_TIME = process.env.MAILBOX_EXPIRATION_TIME || 10
 
 async function createMailbox(req, res) {
  // запрос доступных доменов https://api.mail.tm/domains axios
@@ -26,7 +30,7 @@ async function createMailbox(req, res) {
  // создать пользователя в MailboxList
  await createMailListIfNotExist(userId)
 
- // обновить переред проверкой лоичества => вернет актуальные активные
+ // обновить переред проверкой коичества => вернет актуальные активные
  const userActiveMailboxes = await updateActiveMailboxesStatus(userId)
  console.log('DEBUG updateActiveMailboxesStatus:', userActiveMailboxes)
 
@@ -45,14 +49,16 @@ async function createMailbox(req, res) {
  if (errorCreateAccount) { throw errorCreateAccount }
 
  const mailboxAddress = account.address
- const activation_date = new Date(account.createdAt)
+ const expiresAt = addMinutes(new Date(account.createdAt), MAILBOX_EXPIRATION_TIME) 
+
+ console.log('DEBUG current UTC time', new Date().toISOString())
 
  // получаем токен https://api.mail.tm/token
  const { token, errorGetToken } = await getToken(creds)
  if (errorGetToken) { throw errorGetToken }
 
  // создаем Mailbox
- const mailbox = await createMailboxDB({ userId, mailboxAddress, activation_date, token })
+ const mailbox = await createMailboxDB({ userId, mailboxAddress, expiresAt, token })
 
  // добавляем в MailboxList в активные
  const addMailboxResult = await addMailboxToActive(userId, mailbox)
@@ -65,11 +71,18 @@ async function createMailbox(req, res) {
 async function getMailboxes(req, res) {
  const { userId } = req.params
  await updateActiveMailboxesStatus(userId)
- const mailboxList = await getMailboxesList(userId)
+ const mailboxList = await getMailboxesList(userId) // может адаптировать updateActiveMailboxesStatus возвращать mailboxList чтобы 2 раза в базу не ходить
  res.status(200).json(mailboxList)
+}
+
+async function changeField(req, res) {
+ const { userId } = req.body
+ await makeExpiresAtMailboxesList(userId)
+ res.status(200).json({message: 'ok'})
 }
 
 module.exports = {
  createMailbox,
- getMailboxes
+ getMailboxes,
+ changeField
 }

@@ -6,8 +6,14 @@ const MailboxListSchema = mongoose.Schema({
   type: String,
   require: true
  },
- activeMailboxes: [Mailbox],
- inactiveMailboxes: [Mailbox]
+ activeMailboxes: [{
+  type: mongoose.Schema.Types.ObjectId,
+  ref: 'Mailbox'
+ }],
+ inactiveMailboxes: [{
+  type: mongoose.Schema.Types.ObjectId,
+  ref: 'Mailbox'
+ }]
 })
 
 module.exports = mongoose.model('MailboxList', MailboxListSchema)

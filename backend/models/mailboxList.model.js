@@ -13,14 +13,15 @@ async function addMailboxToActive(userId, mailbox) {
 }
 
 async function updateActiveMailboxesStatus(userId) {
- const mailboxList = await MailboxList.findById(userId)
+ const mailboxList = await MailboxList.findById(userId).populate('activeMailboxes')
+ console.log('DEBUG mailboxList', mailboxList)
 
  for (const mailbox of mailboxList.activeMailboxes.toObject()) {
-  const { activation_date } = mailbox;
+  const expiresAt = new Date(mailbox.expiresAt)
   const now = new Date();
-  const minutesPast = differenceInMinutes(now, activation_date);
+  const minutesPast = differenceInMinutes(now, expiresAt);
 
-  if (minutesPast > MAILBOX_EXPIRATION_TIME) {
+  if (now > expiresAt) {
    mailbox.isActive = false
    mailboxList.activeMailboxes.pull(mailbox._id);
    mailboxList.inactiveMailboxes.addToSet(mailbox);
@@ -32,16 +33,35 @@ async function updateActiveMailboxesStatus(userId) {
  return mailboxList.activeMailboxes
 }
 
+// дописать Sorted
 async function getMailboxesList(userId) {
  const mailbox = await MailboxList.findById(userId)
  mailbox.inactiveMailboxes.sort((mailbox1, mailbox2) => {
-  return new Date(mailbox2.activation_date) - new Date(mailbox1.activation_date)
+  return new Date(mailbox2.expiresAt) - new Date(mailbox1.expiresAt)
  })
  mailbox.activeMailboxes?.sort((mailbox1, mailbox2) => {
-  return new Date(mailbox2.activation_date) - new Date(mailbox1.activation_date)
+  return new Date(mailbox2.expiresAt) - new Date(mailbox1.expiresAt)
  })
 
  return mailbox
+}
+
+async function makeExpiresAtMailboxesList(userId) {
+ const mailboxes = await MailboxList.findOne({ userId })
+
+ const objIdsMailboxes = mailboxes.activeMailboxes.map(box => box._id)
+ mailboxes.activeMailboxes = objIdsMailboxes
+
+ console.log('DEBUG objIdsMailboxes: ', objIdsMailboxes)
+
+ await mailboxes.save()
+
+ // const inactiveMailboxes = await mailboxes.populate('inactiveMailboxes')
+
+ // console.log('DEBUG inactiveMailboxes: ', inactiveMailboxes)
+
+
+ return mailboxes
 }
 
 async function getActiveMailboxes(userId) {
@@ -54,5 +74,6 @@ module.exports = {
  addMailboxToActive,
  updateActiveMailboxesStatus,
  getMailboxesList,
- getActiveMailboxes
+ getActiveMailboxes,
+ makeExpiresAtMailboxesList
 }

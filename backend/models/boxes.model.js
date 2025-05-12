@@ -3,8 +3,12 @@ const Mailbox = require('./Mailbox')
 
 async function createMailboxDB(data) {
  const mailbox = Mailbox(data)
-  await mailbox.save()
+ await mailbox.save()
  return mailbox
+}
+
+async function renameFieldCreateAt(userId) {
+ await Mailbox.updateMany({}, { $rename: { activation_date: "expiresAt" } })
 }
 
 function generateMailboxAddressAndPassword(login, domain) {
@@ -25,5 +29,6 @@ function randomString(length) {
 
 module.exports = {
  createMailboxDB,
- generateMailboxAddressAndPassword
+ generateMailboxAddressAndPassword,
+ renameFieldCreateAt
 }
