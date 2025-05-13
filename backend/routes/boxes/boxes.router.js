@@ -8,12 +8,7 @@ const boxesRouter = express.Router()
 
 // создать ящик
 boxesRouter.post('/', tryCatch(createMailbox)) 
+// получить все ящики пользователя
 boxesRouter.get('/:userId', tryCatch(getMailboxes)) 
-
-// получить все ящики
-//boxesRouter.get('/')
-
-// получить конкретный ящик
-//boxesRouter.get('/{id}')
 
 module.exports = boxesRouter

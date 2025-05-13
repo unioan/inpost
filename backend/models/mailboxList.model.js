@@ -1,4 +1,8 @@
+require('dotenv').config()
 const MailboxList = require('./MailboxList')
+const AppError = require('../error/AppError')
+
+const MAILBOX_MAX_ACTIVE = process.env.MAILBOX_MAX_ACTIVE || 2
 
 async function createMailListIfNotExist(userId) {
  return await MailboxList.findByIdAndUpdate(userId, { userId }, { upsert: true, new: true })
@@ -39,9 +43,24 @@ async function getMailboxesListSorted(userId) {
  return mailbox
 }
 
+function checkMaxActiveRestriction(mailboxList) {
+ console.log('DEBUG mailboxList: ', mailboxList)
+ if (mailboxList.activeMailboxes.length >= MAILBOX_MAX_ACTIVE) {
+  return {
+   errorMaxActiveReached: new AppError(
+    'app',
+    403,
+    'You are not allowed to have more than 2 active mailboxes'
+   )
+  }
+ }
+ return { errorMaxActiveReached: null }
+}
+
 module.exports = {
  createMailListIfNotExist,
  addMailboxToActive,
  getMailboxesListUpdated,
  getMailboxesListSorted,
+ checkMaxActiveRestriction
 }

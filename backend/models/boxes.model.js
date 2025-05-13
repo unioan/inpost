@@ -12,10 +12,6 @@ async function createMailboxDB(userId, mailtmAccount, token) {
  return mailbox
 }
 
-async function renameFieldCreateAt(userId) {
- await Mailbox.updateMany({}, { $rename: { activation_date: "expiresAt" } })
-}
-
 function generateMailboxAddressAndPassword(login, domain) {
  return {
   address: `${randomString(8)}_${login}@${domain}`,
@@ -34,6 +30,5 @@ function randomString(length) {
 
 module.exports = {
  createMailboxDB,
- generateMailboxAddressAndPassword,
- renameFieldCreateAt
+ generateMailboxAddressAndPassword
 }
