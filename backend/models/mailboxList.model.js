@@ -13,7 +13,7 @@ async function addMailboxToActive(userId, mailbox) {
 }
 
 async function getMailboxesListUpdated(userId) {
- const mailboxList = await MailboxList.findById(userId).populate('activeMailboxes')
+ const mailboxList = await MailboxList.findById(userId).populate('activeMailboxes', '-token')
 
  for (const mailbox of mailboxList.activeMailboxes.toObject()) {
   const expiresAt = new Date(mailbox.expiresAt)
@@ -32,7 +32,7 @@ async function getMailboxesListUpdated(userId) {
 }
 
 async function getMailboxesListSorted(userId) {
- const mailbox = await MailboxList.findById(userId).populate('inactiveMailboxes').populate('activeMailboxes');
+ const mailbox = await MailboxList.findById(userId).populate('inactiveMailboxes', '-token').populate('activeMailboxes', '-token');
  mailbox.inactiveMailboxes.sort((mailbox1, mailbox2) => {
   return new Date(mailbox2.expiresAt) - new Date(mailbox1.expiresAt)
  })
