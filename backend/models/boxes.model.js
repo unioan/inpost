@@ -12,6 +12,11 @@ async function createMailboxDB(userId, mailtmAccount, token) {
  return mailbox
 }
 
+async function getMailboxTokenDB(mailboxId) {
+ const { token } = await Mailbox.findById(mailboxId, { token: 1 })
+ return token
+}
+
 function generateMailboxAddressAndPassword(login, domain) {
  return {
   address: `${randomString(8)}_${login}@${domain}`,
@@ -30,5 +35,6 @@ function randomString(length) {
 
 module.exports = {
  createMailboxDB,
+ getMailboxTokenDB,
  generateMailboxAddressAndPassword
 }

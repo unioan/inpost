@@ -55,9 +55,17 @@ async function getMessages(token) {
   return response.data;
 }
 
+async function getMessage(token, messageId) {
+  const response = await axios.get(`${BASE_URL}/messages/${messageId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
+}
+
 module.exports = {
   getDomain,
   createAccount,
   getToken,
   getMessages,
+  getMessage
 };
