@@ -15,8 +15,11 @@ const {
  addMailboxToActive,
  checkMaxActiveRestriction
 } = require('../../models/mailboxList.model')
+const AppError = require('../../error/AppError');
+const UNAUTHENTICATED_ERROR = new AppError('auth', 401, 'You are not authorized')
 
 async function createMailbox(req, res) {
+ if (!req.isAuthenticated()) throw UNAUTHENTICATED_ERROR
  const { login, userId } = req.body
 
  // создать пользователя в MailboxList
@@ -55,6 +58,7 @@ async function createMailbox(req, res) {
 }
 
 async function getMailboxes(req, res) {
+ if (!req.isAuthenticated()) throw UNAUTHENTICATED_ERROR
  const { userId } = req.params
  await getMailboxesListUpdated(userId)
  const mailboxList = await getMailboxesListSorted(userId) 

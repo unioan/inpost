@@ -3,9 +3,12 @@ const {
  getMessage
 } = require('../../services/mailtm')
 const { getMailboxTokenDB } = require('../../models/boxes.model')
+const AppError = require('../../error/AppError');
+const UNAUTHENTICATED_ERROR = new AppError('auth', 401, 'You are not authorized')
 
 // переделать чтобы не фронт передавал токен, а бэк предоставлял его по id ящика
 async function getMessagesList(req, res) {
+ if (!req.isAuthenticated()) throw UNAUTHENTICATED_ERROR
  const { mailboxId } = req.params
  const token = await getMailboxTokenDB(mailboxId)
  const messagesList = await getMessages(token)
@@ -13,6 +16,7 @@ async function getMessagesList(req, res) {
 }
 
 async function getMessageContent(req, res) {
+ if (!req.isAuthenticated()) throw UNAUTHENTICATED_ERROR
  const { mailboxId, messageId } = req.params
  const token = await getMailboxTokenDB(mailboxId)
  const message = await getMessage(token, messageId)
