@@ -26,8 +26,21 @@ app.use('/messages', messagesRouter)
 
 // сейчас будем имплементировать auth enndpoint где будет вызываться проверочная функция из require('./strategies/local-strategy') и все чекать
 // passport.authenticate('local') - будет тригирить код из local-strategy
-app.use('/auth', passport.authenticate('local'), (request, response) => {
+app.post('/auth', passport.authenticate('local'), (request, response) => {
  response.sendStatus(200)
+})
+
+app.get('/auth/status', (request, response) => {
+ console.log('DEBUG request.isAuthenticated():', request.isAuthenticated())
+ request.user ? response.send('Okay dude') : response.sendStatus(401)
+})
+
+app.post('/auth/logout', (res, req) => {
+ if (!req.user) res.sendStatus(401)
+ req.logout((error) => {
+  if (error) res.sendStatus(400)
+  res.sendStatus(200)
+ })
 })
 
 app.use(errorHandler)
