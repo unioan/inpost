@@ -1,4 +1,6 @@
 const { createDBUser } = require('../../models/users.model')
+const AppError = require('../../error/AppError');
+const UNAUTHENTICATED_ERROR = new AppError('auth', 401, 'You are not authorized')
 
 async function createUser(req, res) {
   try {
@@ -15,6 +17,26 @@ async function createUser(req, res) {
   }
 }
 
+function authorizeUser(req, res) {
+  res.sendStatus(200)
+}
+
+function loginStatusUser(req, res) {
+  if (!req.isAuthenticated()) throw UNAUTHENTICATED_ERROR
+  res.send('Okay dude, you are AUTHENTICATED')
+}
+
+function logoutUser(req, res) {
+  if (!req.isAuthenticated()) throw UNAUTHENTICATED_ERROR
+  req.logout((error) => {
+    if (error) throw new AppError('auth', 400, 'Unknown error during logout')
+    res.sendStatus(200)
+  })
+}
+
 module.exports = {
-  createUser
+  createUser,
+  loginStatusUser,
+  logoutUser,
+  authorizeUser
 }
