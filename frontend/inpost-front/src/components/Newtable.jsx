@@ -2,12 +2,14 @@ import {
   useReactTable,
   getCoreRowModel,
   flexRender,
+  getExpandedRowModel,
 } from '@tanstack/react-table';
 import { useState, useEffect, useRef } from 'react';
 import { parseISO, format } from 'date-fns';
 import { LuExternalLink, LuMaximize2, LuPaperclip } from 'react-icons/lu';
 import { VscCircleLargeFilled } from 'react-icons/vsc';
 import { RiDeleteBin7Fill } from 'react-icons/ri';
+import React from 'react';
 
 const mailbox = [
   {
@@ -107,16 +109,6 @@ const mailbox = [
 const columns = [
   {
     id: 'select',
-    header: ({ table }) => (
-      <IndeterminateCheckbox
-        className='flex'
-        {...{
-          checked: table.getIsAllRowsSelected(),
-          indeterminate: table.getIsSomeRowsSelected(),
-          onChange: table.getToggleAllRowsSelectedHandler(),
-        }}
-      />
-    ),
     cell: ({ row }) => (
       <IndeterminateCheckbox
         {...{
@@ -164,7 +156,7 @@ const columns = [
       <div className='flex flex-row-reverse gap-10 p-2 items-center'>
         <div className='flex flex-row-reverse gap-3'>
           <LuMaximize2
-            onClick={() => console.log('Edit', row.original)}
+            onClick={row.getToggleExpandedHandler()}
             className='text-lg'
           >
             Edit
@@ -224,14 +216,18 @@ function IndeterminateCheckbox({ indeterminate, className = '', ...rest }) {
 function Newtable() {
   const [data, setData] = useState(mailbox);
   const [rowSelection, setRowSelection] = useState({});
+  const [expanded, setExpanded] = useState({});
 
   const table = useReactTable({
     data,
     columns,
+    getRowCanExpand: (row) => true,
     getRowId: (row) => row.id,
     state: {
+      expanded,
       rowSelection,
     },
+    onExpandedChange: setExpanded,
     onRowSelectionChange: setRowSelection,
     defaultColumn: {
       size: 0,
@@ -247,6 +243,7 @@ function Newtable() {
       },
     },
     getCoreRowModel: getCoreRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
   });
 
   return (
@@ -276,20 +273,25 @@ function Newtable() {
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className='border-b-[0.1px] border-black'>
-              {row.getVisibleCells().map((cell) => {
-                return (
-                  <td
-                    key={cell.id}
-                    style={{
-                      width: cell.column.getSize(),
-                    }}
-                  >
+            <React.Fragment key={row.id}>
+              <tr className='border-b-[0.1px] border-black'>
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id} style={{ width: cell.column.getSize() }}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
-                );
-              })}
-            </tr>
+                ))}
+              </tr>
+
+              {row.getIsExpanded() && (
+                <tr>
+                  <td colSpan={row.getVisibleCells().length}>
+                    <div className='py-4 px-12 bg-gray-100'>
+                      Expanded content for: {row.original.content}
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </React.Fragment>
           ))}
         </tbody>
       </table>
