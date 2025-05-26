@@ -1,0 +1,300 @@
+import {
+  useReactTable,
+  getCoreRowModel,
+  flexRender,
+} from '@tanstack/react-table';
+import { useState, useEffect, useRef } from 'react';
+import { parseISO, format } from 'date-fns';
+import { LuExternalLink, LuMaximize2, LuPaperclip } from 'react-icons/lu';
+import { VscCircleLargeFilled } from 'react-icons/vsc';
+import { RiDeleteBin7Fill } from 'react-icons/ri';
+
+const mailbox = [
+  {
+    id: '1',
+    email: 'alice@example.com',
+    subject: 'Meeting Reminder bdbdbdfbfbdbdfbfdbdfbdb',
+    content: 'Just a reminder about the meeting tomorrow at 10am.',
+    date: '2025-05-21T08:15:00+00:00',
+    seen: false,
+    hasAttachments: false,
+  },
+  {
+    id: '2',
+    email: 'bob@example.com',
+    subject: 'Invoice Attached',
+    content: "Please find the invoice attached for last month's services.",
+    date: '2025-05-20T13:45:22+00:00',
+    seen: false,
+    hasAttachments: true,
+  },
+  {
+    id: '3',
+    email: 'carol@example.org',
+    subject: 'Vacation Request',
+    content: 'I would like to request vacation time for next week.',
+    date: '2025-05-19T10:30:12+00:00',
+    seen: false,
+    hasAttachments: false,
+  },
+  {
+    id: '4',
+    email: 'dave@company.com',
+    subject: 'System Downtime',
+    content: 'The system will be undergoing maintenance tonight.',
+    date: '2025-05-18T22:05:44+00:00',
+    seen: true,
+    hasAttachments: false,
+  },
+  {
+    id: '5',
+    email: 'emma@domain.net',
+    subject: 'Feedback Request',
+    content: 'We’d love your feedback on our new service update.',
+    date: '2025-05-17T14:23:11+00:00',
+    seen: false,
+    hasAttachments: false,
+  },
+  {
+    id: '6',
+    email: 'frank@corp.org',
+    subject: 'Weekly Report',
+    content:
+      'Attached is the weekly report. Let me know if you have questions.',
+    date: '2025-05-16T09:10:30+00:00',
+    seen: true,
+    hasAttachments: true,
+  },
+  {
+    id: '7',
+    email: 'grace@example.com',
+    subject: 'Happy Birthday!',
+    content: 'Wishing you a fantastic birthday filled with joy!',
+    date: '2025-05-15T18:55:00+00:00',
+    seen: true,
+    hasAttachments: false,
+  },
+  {
+    id: '8',
+    email: 'hank@bizmail.com',
+    subject: 'Follow-up Needed',
+    content:
+      'Following up on our last conversation. Can you send the document?',
+    date: '2025-05-14T11:25:33+00:00',
+    seen: false,
+    hasAttachments: false,
+  },
+  {
+    id: '9',
+    email: 'irene@startup.io',
+    subject: 'Launch Plan',
+    content: 'Here is the final draft of the launch plan. Feedback welcome.',
+    date: '2025-05-13T07:50:15+00:00',
+    seen: true,
+    hasAttachments: true,
+  },
+  {
+    id: '10',
+    email: 'jack@webmail.co',
+    subject: 'New Opportunity',
+    content: 'We have an exciting opportunity you might be interested in.',
+    date: '2025-05-12T15:40:55+00:00',
+    seen: false,
+    hasAttachments: false,
+  },
+];
+
+const columns = [
+  {
+    id: 'select',
+    header: ({ table }) => (
+      <IndeterminateCheckbox
+        className='flex'
+        {...{
+          checked: table.getIsAllRowsSelected(),
+          indeterminate: table.getIsSomeRowsSelected(),
+          onChange: table.getToggleAllRowsSelectedHandler(),
+        }}
+      />
+    ),
+    cell: ({ row }) => (
+      <IndeterminateCheckbox
+        {...{
+          checked: row.getIsSelected(),
+          disabled: !row.getCanSelect(),
+          indeterminate: row.getIsSomeSelected(),
+          onChange: row.getToggleSelectedHandler(),
+        }}
+      />
+    ),
+    size: 20,
+  },
+  {
+    accessorKey: 'date',
+    header: 'Date',
+    cell: (props) => {
+      const content = props.getValue();
+      const date = parseISO(content);
+      const formatted = format(date, 'd MMM H:mm');
+      return <p>{formatted}</p>;
+    },
+    size: 80,
+  },
+  {
+    accessorKey: 'email',
+    header: 'Email',
+    cell: (props) => {
+      const content = props.getValue();
+      return <p>{content}</p>;
+    },
+    size: 150,
+  },
+  {
+    accessorKey: 'subject',
+    header: 'Title',
+    cell: (props) => {
+      const content = props.getValue();
+      return <p>{content}</p>;
+    },
+    size: 250,
+  },
+  {
+    id: 'actions',
+    cell: ({ row, table }) => (
+      <div className='flex flex-row-reverse gap-10 p-2 items-center'>
+        <div className='flex flex-row-reverse gap-3'>
+          <LuMaximize2
+            onClick={() => console.log('Edit', row.original)}
+            className='text-lg'
+          >
+            Edit
+          </LuMaximize2>
+          <LuExternalLink className='text-lg' />
+        </div>
+        <div className='flex flex-row-reverse gap-3'>
+          <LuPaperclip
+            className='text-lg'
+            style={{
+              visibility: row.original.hasAttachments ? 'visible' : 'hidden',
+            }}
+          />
+          <VscCircleLargeFilled
+            className='text-lg'
+            style={{
+              color: '#02a9ea',
+              visibility: row.original.seen ? 'hidden' : 'visible',
+            }}
+          />
+          {row.getIsSelected() && (
+            <RiDeleteBin7Fill
+              onClick={() => {
+                table.options.meta.removeRow(row.id);
+              }}
+              className='text-red-600 text-lg'
+            >
+              Delete
+            </RiDeleteBin7Fill>
+          )}
+        </div>
+      </div>
+    ),
+    size: 120,
+  },
+];
+
+function IndeterminateCheckbox({ indeterminate, className = '', ...rest }) {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (typeof indeterminate === 'boolean' && ref.current) {
+      ref.current.indeterminate = !rest.checked && indeterminate;
+    }
+  }, [indeterminate, rest.checked]);
+
+  return (
+    <input
+      type='checkbox'
+      ref={ref}
+      className={className + ' cursor-pointer'}
+      {...rest}
+    />
+  );
+}
+
+function Newtable() {
+  const [data, setData] = useState(mailbox);
+  const [rowSelection, setRowSelection] = useState({});
+
+  const table = useReactTable({
+    data,
+    columns,
+    getRowId: (row) => row.id,
+    state: {
+      rowSelection,
+    },
+    onRowSelectionChange: setRowSelection,
+    defaultColumn: {
+      size: 0,
+    },
+    meta: {
+      removeRow: (rowId) => {
+        setData((old) => old.filter((row) => row.id != rowId));
+        setRowSelection((prev) => {
+          const updated = { ...prev };
+          delete updated[rowId];
+          return updated;
+        });
+      },
+    },
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  return (
+    <>
+      <table className='w-full table-fixed'>
+        <thead>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <th
+                  key={header.id}
+                  className='text-left'
+                  style={{
+                    width: header.getSize(),
+                  }}
+                >
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map((row) => (
+            <tr key={row.id} className='border-b-[0.1px] border-black'>
+              {row.getVisibleCells().map((cell) => {
+                return (
+                  <td
+                    key={cell.id}
+                    style={{
+                      width: cell.column.getSize(),
+                    }}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </>
+  );
+}
+
+export default Newtable;
