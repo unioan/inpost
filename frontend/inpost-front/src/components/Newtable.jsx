@@ -5,8 +5,14 @@ import {
   getExpandedRowModel,
 } from '@tanstack/react-table';
 import { useState, useEffect, useRef } from 'react';
-import { parseISO, format } from 'date-fns';
-import { LuExternalLink, LuMaximize2, LuPaperclip } from 'react-icons/lu';
+import { parseISO, format, previousDay } from 'date-fns';
+import {
+  LuExternalLink,
+  LuChevronDown,
+  LuPaperclip,
+  LuLoader,
+  LuChevronUp,
+} from 'react-icons/lu';
 import { VscCircleLargeFilled } from 'react-icons/vsc';
 import { RiDeleteBin7Fill } from 'react-icons/ri';
 import React from 'react';
@@ -106,94 +112,6 @@ const mailbox = [
   },
 ];
 
-const columns = [
-  {
-    id: 'select',
-    cell: ({ row }) => (
-      <IndeterminateCheckbox
-        {...{
-          checked: row.getIsSelected(),
-          disabled: !row.getCanSelect(),
-          indeterminate: row.getIsSomeSelected(),
-          onChange: row.getToggleSelectedHandler(),
-        }}
-      />
-    ),
-    size: 20,
-  },
-  {
-    accessorKey: 'date',
-    header: 'Date',
-    cell: (props) => {
-      const content = props.getValue();
-      const date = parseISO(content);
-      const formatted = format(date, 'd MMM H:mm');
-      return <p>{formatted}</p>;
-    },
-    size: 80,
-  },
-  {
-    accessorKey: 'email',
-    header: 'Email',
-    cell: (props) => {
-      const content = props.getValue();
-      return <p>{content}</p>;
-    },
-    size: 150,
-  },
-  {
-    accessorKey: 'subject',
-    header: 'Title',
-    cell: (props) => {
-      const content = props.getValue();
-      return <p>{content}</p>;
-    },
-    size: 250,
-  },
-  {
-    id: 'actions',
-    cell: ({ row, table }) => (
-      <div className='flex flex-row-reverse gap-10 p-2 items-center'>
-        <div className='flex flex-row-reverse gap-3'>
-          <LuMaximize2
-            onClick={row.getToggleExpandedHandler()}
-            className='text-lg'
-          >
-            Edit
-          </LuMaximize2>
-          <LuExternalLink className='text-lg' />
-        </div>
-        <div className='flex flex-row-reverse gap-3'>
-          <LuPaperclip
-            className='text-lg'
-            style={{
-              visibility: row.original.hasAttachments ? 'visible' : 'hidden',
-            }}
-          />
-          <VscCircleLargeFilled
-            className='text-lg'
-            style={{
-              color: '#02a9ea',
-              visibility: row.original.seen ? 'hidden' : 'visible',
-            }}
-          />
-          {row.getIsSelected() && (
-            <RiDeleteBin7Fill
-              onClick={() => {
-                table.options.meta.removeRow(row.id);
-              }}
-              className='text-red-600 text-lg'
-            >
-              Delete
-            </RiDeleteBin7Fill>
-          )}
-        </div>
-      </div>
-    ),
-    size: 120,
-  },
-];
-
 function IndeterminateCheckbox({ indeterminate, className = '', ...rest }) {
   const ref = useRef(null);
 
@@ -217,6 +135,174 @@ function Newtable() {
   const [data, setData] = useState(mailbox);
   const [rowSelection, setRowSelection] = useState({});
   const [expanded, setExpanded] = useState({});
+  const [messgeList, setMessageList] = useState({});
+  const [loadingList, setLoadingList] = useState({});
+
+  const columns = [
+    {
+      id: 'select',
+      cell: ({ row }) => (
+        <IndeterminateCheckbox
+          {...{
+            checked: row.getIsSelected(),
+            disabled: !row.getCanSelect(),
+            indeterminate: row.getIsSomeSelected(),
+            onChange: row.getToggleSelectedHandler(),
+          }}
+        />
+      ),
+      size: 20,
+    },
+    {
+      accessorKey: 'date',
+      header: 'Date',
+      cell: (props) => {
+        const content = props.getValue();
+        const date = parseISO(content);
+        const formatted = format(date, 'd MMM H:mm');
+        return <p>{formatted}</p>;
+      },
+      size: 80,
+    },
+    {
+      accessorKey: 'email',
+      header: 'Email',
+      cell: (props) => {
+        const content = props.getValue();
+        return <p>{content}</p>;
+      },
+      size: 150,
+    },
+    {
+      accessorKey: 'subject',
+      header: 'Title',
+      cell: (props) => {
+        const content = props.getValue();
+        return <p>{content}</p>;
+      },
+      size: 250,
+    },
+    {
+      id: 'actions',
+      cell: ({ row, table }) => {
+        const addExpended = () => {
+          if (expanded[row.id]) {
+            // extended
+            if (loadingList[row.id]) {
+              // грузится
+              return;
+            } else {
+              // уже загружено, появился шеврон - закрыть раскрытый row
+              setExpanded((prev) => {
+                const updated = { ...prev };
+                delete updated[row.id];
+                return updated;
+              });
+              return;
+            }
+          } else {
+            // NONextended
+            setExpanded((prev) => ({ ...prev, [row.id]: true }));
+            // нет сообщения
+            if (!messgeList[row.id]) {
+              // включить загрузку
+              setLoadingList((prev) => ({ ...prev, [row.id]: true }));
+              setTimeout(() => {
+                // сохранить message
+                setMessageList((prev) => ({
+                  ...prev,
+                  [row.id]: { content: 'opanki' },
+                }));
+                // убрать из загрузки
+                setLoadingList((prev) => {
+                  const updated = { ...prev };
+                  delete updated[row.id];
+                  return updated;
+                });
+              }, 5000);
+              return;
+            }
+            // есть сообщение
+            return;
+          }
+        };
+
+        return (
+          <div className='flex flex-row-reverse gap-10 p-2 items-center'>
+            <div className='flex flex-row-reverse items-center gap-3'>
+              {loadingList[row.id] ? (
+                <LuLoader className='text-lg animate-spin' />
+              ) : expanded[row.id] ? (
+                <LuChevronUp
+                  className='text-lg font-semibold'
+                  onClick={addExpended}
+                />
+              ) : (
+                <div className='relative group'>
+                  <LuChevronDown
+                    onClick={addExpended}
+                    className='text-lg font-semibold'
+                  />
+                  <span className='absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap'>
+                    Open message
+                  </span>
+                </div>
+              )}
+              <div className='relative group'>
+                <LuExternalLink className='text-lg' />
+                <span className='absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap'>
+                  Open in separate tab
+                </span>
+              </div>
+            </div>
+            <div className='flex flex-row-reverse gap-3'>
+              <div className='relative group'>
+                <LuPaperclip
+                  className='text-lg'
+                  style={{
+                    visibility: row.original.hasAttachments
+                      ? 'visible'
+                      : 'hidden',
+                  }}
+                />
+                <span className='absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap'>
+                  Has attachments
+                </span>
+              </div>
+              <VscCircleLargeFilled
+                className='text-lg'
+                style={{
+                  color: '#02a9ea',
+                  visibility: row.original.seen ? 'hidden' : 'visible',
+                }}
+              />
+              {row.getIsSelected() && (
+                <RiDeleteBin7Fill
+                  onClick={() => {
+                    setMessageList((prev) => {
+                      const updated = { ...prev };
+                      delete updated[row.id];
+                      return updated;
+                    });
+                    setExpanded((prev) => {
+                      const updated = { ...prev };
+                      delete updated[row.id];
+                      return updated;
+                    });
+                    table.options.meta.removeRow(row.id);
+                  }}
+                  className='text-red-600 text-lg'
+                >
+                  Delete
+                </RiDeleteBin7Fill>
+              )}
+            </div>
+          </div>
+        );
+      },
+      size: 120,
+    },
+  ];
 
   const table = useReactTable({
     data,
@@ -282,7 +368,7 @@ function Newtable() {
                 ))}
               </tr>
 
-              {row.getIsExpanded() && (
+              {row.getIsExpanded() && messgeList[row.id]?.content && (
                 <tr>
                   <td colSpan={row.getVisibleCells().length}>
                     <div className='py-4 px-12 bg-gray-100'>
