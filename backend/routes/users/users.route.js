@@ -4,13 +4,14 @@ const {
  createUser,
  loginStatusUser,
  logoutUser,
- authorizeUser
+ authorizeUser,
+ loginUser
 } = require('./users.controller');
 const tryCatch = require('../../error/tryCatch');
 const usersRouter = express.Router();
 
 usersRouter.post('/register', tryCatch(createUser));
-usersRouter.post('/login', passport.authenticate('local'), tryCatch(authorizeUser));
+usersRouter.post('/login', loginUser);
 usersRouter.get('/login-status', tryCatch(loginStatusUser));
 usersRouter.post('/logout', tryCatch(logoutUser))
 

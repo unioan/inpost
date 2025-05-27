@@ -1,3 +1,4 @@
+const passport = require('passport');
 const { createDBUser } = require('../../models/users.model')
 const AppError = require('../../error/AppError');
 const UNAUTHENTICATED_ERROR = new AppError('auth', 401, 'You are not authorized')
@@ -15,6 +16,23 @@ async function createUser(req, res) {
         res.status(500).json({ message: 'ERROR when creating user ', error });
     }
   }
+}
+
+function loginUser(req, res, next) {
+  passport.authenticate('local', (err, user, info) => {
+    if (err) return next(err);
+    if (!user) return res.status(401).json({ message: 'Authentication failed' });
+
+    req.logIn(user, (err) => {
+      if (err) return next(err);
+
+      return res.status(200).json({
+        message: 'Login successful',
+        userId: user.id,
+        login: user.login
+      });
+    });
+  })(req, res, next);
 }
 
 function authorizeUser(req, res) {
@@ -38,5 +56,6 @@ module.exports = {
   createUser,
   loginStatusUser,
   logoutUser,
-  authorizeUser
+  authorizeUser,
+  loginUser
 }

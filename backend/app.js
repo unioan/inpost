@@ -6,8 +6,13 @@ const boxesRouter = require('./routes/boxes/boxes.router')
 const messagesRouter = require('./routes/messages/messages.router')
 const passport = require('passport')
 const session = require('express-session')
+const cors = require('cors')
 require('./strategies/local-strategy')
 
+app.use(cors({
+ origin: 'http://localhost:5173', // your frontend port
+ credentials: true               // allow cookies and headers
+}));
 app.use(express.json());
 app.use(session({
  secret: "jepe",
