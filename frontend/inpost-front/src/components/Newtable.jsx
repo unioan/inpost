@@ -138,11 +138,13 @@ function IndeterminateCheckbox({ indeterminate, className = '', ...rest }) {
 }
 
 function Newtable() {
-  const [data, setData] = useState(mailbox);
+  const [data, setData] = useState([]);
   const [rowSelection, setRowSelection] = useState({});
   const [expanded, setExpanded] = useState({});
   const [messgeList, setMessageList] = useState({});
   const [loadingList, setLoadingList] = useState({});
+
+  let userId;
 
   useEffect(() => {
     async function login() {
@@ -152,6 +154,19 @@ function Newtable() {
           password: '123321',
         });
         console.log('✅ Login successful:', response.data); // <-- result here
+        userId = response.data.userId;
+
+        const mailboxes = await api.get(`/boxes/${userId}`);
+        console.log('✅ Mailbox successful:', mailboxes.data); // <-- result here
+
+        const initialMailbox =
+          mailboxes.data.activeMailboxes[0] ||
+          mailboxes.data.inactiveMailboxes[0];
+
+        console.log('DEBUG initialMailbox: ', initialMailbox);
+        const messages = await api.get(`/messages/${initialMailbox._id}`);
+        console.log('✅ Messages successful:', messages.data); // <-- result here
+        setData(messages.data['hydra:member']);
       } catch (error) {
         if (error.response) {
           console.error('❌ Server responded with error:', error.response.data); // Backend response
@@ -183,7 +198,7 @@ function Newtable() {
       size: 20,
     },
     {
-      accessorKey: 'date',
+      accessorKey: 'createdAt',
       header: 'Date',
       cell: (props) => {
         const content = props.getValue();
@@ -194,7 +209,7 @@ function Newtable() {
       size: 80,
     },
     {
-      accessorKey: 'email',
+      accessorFn: (row) => row.from?.address,
       header: 'Email',
       cell: (props) => {
         const content = props.getValue();
