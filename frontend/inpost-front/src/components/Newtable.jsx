@@ -16,6 +16,12 @@ import {
 import { VscCircleLargeFilled } from 'react-icons/vsc';
 import { RiDeleteBin7Fill } from 'react-icons/ri';
 import React from 'react';
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: 'http://localhost:3000',
+  withCredentials: true,
+});
 
 const mailbox = [
   {
@@ -137,6 +143,29 @@ function Newtable() {
   const [expanded, setExpanded] = useState({});
   const [messgeList, setMessageList] = useState({});
   const [loadingList, setLoadingList] = useState({});
+
+  useEffect(() => {
+    async function login() {
+      try {
+        const response = await api.post('/users/login', {
+          login: 'jepe',
+          password: '123321',
+        });
+        console.log('✅ Login successful:', response.data); // <-- result here
+      } catch (error) {
+        if (error.response) {
+          console.error('❌ Server responded with error:', error.response.data); // Backend response
+          console.error('Status code:', error.response.status);
+        } else if (error.request) {
+          console.error('❌ No response received:', error.request);
+        } else {
+          console.error('❌ Error during request setup:', error.message);
+        }
+      }
+    }
+
+    login();
+  }, []);
 
   const columns = [
     {
