@@ -17,11 +17,12 @@ import { VscCircleLargeFilled } from 'react-icons/vsc';
 import { RiDeleteBin7Fill } from 'react-icons/ri';
 import React from 'react';
 import axios from 'axios';
-
-const api = axios.create({
-  baseURL: 'http://localhost:3000',
-  withCredentials: true,
-});
+import {
+  loginUser,
+  fetchMailboxes,
+  fetchMessages,
+  fetchMessage,
+} from '../services/api';
 
 const mailbox = [
   {
@@ -137,45 +138,84 @@ function IndeterminateCheckbox({ indeterminate, className = '', ...rest }) {
   );
 }
 
+let userId;
+
+
 function Newtable() {
   const [data, setData] = useState([]);
   const [rowSelection, setRowSelection] = useState({});
   const [expanded, setExpanded] = useState({});
-  const [messgeList, setMessageList] = useState({});
+  const [messageList, setMessageList] = useState({});
   const [loadingList, setLoadingList] = useState({});
 
-  let userId;
+  const mailboxId = useRef()
+
+  const messageFetchingHandler = async (rowId) => {
+    if (expanded[rowId]) {
+      // extended
+      if (loadingList[rowId]) {
+        // грузится
+        return;
+      } else {
+        // уже загружено, появился шеврон - закрыть раскрытый row
+        setExpanded((prev) => {
+          const updated = { ...prev };
+          delete updated[rowId];
+          return updated;
+        });
+        return;
+      }
+    } else {
+      // NONextended
+      setExpanded((prev) => ({ ...prev, [rowId]: true }));
+      // нет сообщения
+      if (!messageList[rowId]) {
+        // включить загрузку
+        setLoadingList((prev) => ({ ...prev, [rowId]: true }));
+        const { text } = await fetchMessage(mailboxId.current, rowId);
+        console.log('DEBUG: ', text);
+        // сохранить message
+        setMessageList((prev) => ({
+          ...prev,
+          [rowId]: { content: text },
+        }));
+        // убрать из загрузки
+        setLoadingList((prev) => {
+          const updated = { ...prev };
+          delete updated[rowId];
+          return updated;
+        });
+        return;
+      }
+      // есть сообщение
+      return;
+    }
+  };
 
   useEffect(() => {
     async function login() {
       try {
-        const response = await api.post('/users/login', {
+        const { userId: id } = await loginUser({
           login: 'jepe',
           password: '123321',
         });
-        console.log('✅ Login successful:', response.data); // <-- result here
-        userId = response.data.userId;
+        console.log('Login successful:', id); // <-- result here
+        userId = id;
 
-        const mailboxes = await api.get(`/boxes/${userId}`);
-        console.log('✅ Mailbox successful:', mailboxes.data); // <-- result here
+        const mailboxes = await fetchMailboxes(id);
+        console.log('Mailbox successful:', mailboxes); // <-- result here
 
         const initialMailbox =
-          mailboxes.data.activeMailboxes[0] ||
-          mailboxes.data.inactiveMailboxes[0];
-
+          mailboxes.activeMailboxes[0] || mailboxes.inactiveMailboxes[0];
         console.log('DEBUG initialMailbox: ', initialMailbox);
-        const messages = await api.get(`/messages/${initialMailbox._id}`);
-        console.log('✅ Messages successful:', messages.data); // <-- result here
-        setData(messages.data['hydra:member']);
+
+        mailboxId.current = initialMailbox._id;
+
+        const messages = await fetchMessages(initialMailbox._id);
+        console.log('Messages successful:', messages); // <-- result here
+        setData(messages['hydra:member']);
       } catch (error) {
-        if (error.response) {
-          console.error('❌ Server responded with error:', error.response.data); // Backend response
-          console.error('Status code:', error.response.status);
-        } else if (error.request) {
-          console.error('❌ No response received:', error.request);
-        } else {
-          console.error('❌ Error during request setup:', error.message);
-        }
+        console.error('Error:', error.message);
       }
     }
 
@@ -206,7 +246,7 @@ function Newtable() {
         const formatted = format(date, 'd MMM H:mm');
         return <p>{formatted}</p>;
       },
-      size: 80,
+      size: 110,
     },
     {
       accessorFn: (row) => row.from?.address,
@@ -224,51 +264,13 @@ function Newtable() {
         const content = props.getValue();
         return <p>{content}</p>;
       },
-      size: 250,
+      size: 450,
     },
     {
       id: 'actions',
       cell: ({ row, table }) => {
-        const addExpended = () => {
-          if (expanded[row.id]) {
-            // extended
-            if (loadingList[row.id]) {
-              // грузится
-              return;
-            } else {
-              // уже загружено, появился шеврон - закрыть раскрытый row
-              setExpanded((prev) => {
-                const updated = { ...prev };
-                delete updated[row.id];
-                return updated;
-              });
-              return;
-            }
-          } else {
-            // NONextended
-            setExpanded((prev) => ({ ...prev, [row.id]: true }));
-            // нет сообщения
-            if (!messgeList[row.id]) {
-              // включить загрузку
-              setLoadingList((prev) => ({ ...prev, [row.id]: true }));
-              setTimeout(() => {
-                // сохранить message
-                setMessageList((prev) => ({
-                  ...prev,
-                  [row.id]: { content: 'opanki' },
-                }));
-                // убрать из загрузки
-                setLoadingList((prev) => {
-                  const updated = { ...prev };
-                  delete updated[row.id];
-                  return updated;
-                });
-              }, 5000);
-              return;
-            }
-            // есть сообщение
-            return;
-          }
+        const handleToggleExpand = () => {
+          messageFetchingHandler(row.id);
         };
 
         return (
@@ -279,12 +281,12 @@ function Newtable() {
               ) : expanded[row.id] ? (
                 <LuChevronUp
                   className='text-lg font-semibold'
-                  onClick={addExpended}
+                  onClick={handleToggleExpand}
                 />
               ) : (
                 <div className='relative group'>
                   <LuChevronDown
-                    onClick={addExpended}
+                    onClick={handleToggleExpand}
                     className='text-lg font-semibold'
                   />
                   <span className='absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap'>
@@ -344,7 +346,7 @@ function Newtable() {
           </div>
         );
       },
-      size: 120,
+      size: 170,
     },
   ];
 
@@ -406,17 +408,17 @@ function Newtable() {
             <React.Fragment key={row.id}>
               <tr className='border-b-[0.1px] border-black'>
                 {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} style={{ width: cell.column.getSize() }}>
+                  <td key={cell.id} style={{ maxWidth: cell.column.getSize() }}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
               </tr>
 
-              {row.getIsExpanded() && messgeList[row.id]?.content && (
+              {row.getIsExpanded() && messageList[row.id]?.content && (
                 <tr>
                   <td colSpan={row.getVisibleCells().length}>
                     <div className='py-4 px-12 bg-gray-100'>
-                      Expanded content for: {row.original.content}
+                      Expanded content for: {messageList[row.id]?.content}
                     </div>
                   </td>
                 </tr>
