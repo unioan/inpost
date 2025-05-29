@@ -1,15 +1,21 @@
 import { useState } from "react";
-import api from "../services/api";
+import { fetchMessages } from "../services/api";
 
-const useFetchMessages = (mailboxId) => {
- const [messages, setMesssages] = useState([])
+export const useFetchMessages = () => {
+ const [messages, setMessages] = useState([])
 
- const refetchMessages = async () => {
-  const refetchedMessages = await api.fetchMessages(mailboxId)
-  setMesssages(() => ({ refetchMessages }))
+ // перередерить список сообщений дргого ящика
+ const refetchMessages = async (newMailboxId) => {
+  const messages = await fetchMessages(newMailboxId)
+  setMessages(messages['hydra:member'])
  }
 
- return [messages, refetchMessages]
-}
+ const removeMessage = (rowId) => {
+  setMessages((prev) => {
+   const updated = prev.filter((row) => row.id != rowId)
+   return updated
+  })
+ }
 
-export default useFetchMessages
+ return [messages, refetchMessages, removeMessage]
+}

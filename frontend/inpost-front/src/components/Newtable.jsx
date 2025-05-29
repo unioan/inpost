@@ -16,7 +16,7 @@ import {
 import { VscCircleLargeFilled } from 'react-icons/vsc';
 import { RiDeleteBin7Fill } from 'react-icons/ri';
 import React from 'react';
-import axios from 'axios';
+import IndeterminateCheckbox from './IndeterminateCheckbox';
 import {
   loginUser,
   fetchMailboxes,
@@ -119,37 +119,17 @@ const mailbox = [
   },
 ];
 
-function IndeterminateCheckbox({ indeterminate, className = '', ...rest }) {
-  const ref = useRef(null);
-
-  useEffect(() => {
-    if (typeof indeterminate === 'boolean' && ref.current) {
-      ref.current.indeterminate = !rest.checked && indeterminate;
-    }
-  }, [indeterminate, rest.checked]);
-
-  return (
-    <input
-      type='checkbox'
-      ref={ref}
-      className={className + ' cursor-pointer'}
-      {...rest}
-    />
-  );
-}
-
 let userId;
 
-
-function Newtable() {
-  const [data, setData] = useState([]);
+function Newtable({ messages, removeMessage, mailboxId }) {
   const [rowSelection, setRowSelection] = useState({});
   const [expanded, setExpanded] = useState({});
+  // загружанное письмо
   const [messageList, setMessageList] = useState({});
+  // загружаемое письмо
   const [loadingList, setLoadingList] = useState({});
 
-  const mailboxId = useRef()
-
+  // ВЫНЕСТИ: переключает состояние row (не скачано, запустить скачивание, в процессе)
   const messageFetchingHandler = async (rowId) => {
     if (expanded[rowId]) {
       // extended
@@ -172,7 +152,7 @@ function Newtable() {
       if (!messageList[rowId]) {
         // включить загрузку
         setLoadingList((prev) => ({ ...prev, [rowId]: true }));
-        const { text } = await fetchMessage(mailboxId.current, rowId);
+        const { text } = await fetchMessage(mailboxId, rowId);
         console.log('DEBUG: ', text);
         // сохранить message
         setMessageList((prev) => ({
@@ -192,35 +172,35 @@ function Newtable() {
     }
   };
 
-  useEffect(() => {
-    async function login() {
-      try {
-        const { userId: id } = await loginUser({
-          login: 'jepe',
-          password: '123321',
-        });
-        console.log('Login successful:', id); // <-- result here
-        userId = id;
+  // useEffect(() => {
+  //   async function login() {
+  //     try {
+  //       const { userId: id } = await loginUser({
+  //         login: 'jepe',
+  //         password: '123321',
+  //       });
+  //       console.log('Login successful:', id); // <-- result here
+  //       userId = id;
 
-        const mailboxes = await fetchMailboxes(id);
-        console.log('Mailbox successful:', mailboxes); // <-- result here
+  //       const mailboxes = await fetchMailboxes(id);
+  //       console.log('Mailbox successful:', mailboxes); // <-- result here
 
-        const initialMailbox =
-          mailboxes.activeMailboxes[0] || mailboxes.inactiveMailboxes[0];
-        console.log('DEBUG initialMailbox: ', initialMailbox);
+  //       const initialMailbox =
+  //         mailboxes.activeMailboxes[0] || mailboxes.inactiveMailboxes[0];
+  //       console.log('DEBUG initialMailbox: ', initialMailbox);
 
-        mailboxId.current = initialMailbox._id;
+  //       mailboxId.current = initialMailbox._id;
 
-        const messages = await fetchMessages(initialMailbox._id);
-        console.log('Messages successful:', messages); // <-- result here
-        setData(messages['hydra:member']);
-      } catch (error) {
-        console.error('Error:', error.message);
-      }
-    }
+  //       const messages = await fetchMessages(initialMailbox._id);
+  //       console.log('Messages successful:', messages); // <-- result here
+  //       setData(messages['hydra:member']);
+  //     } catch (error) {
+  //       console.error('Error:', error.message);
+  //     }
+  //   }
 
-    login();
-  }, []);
+  //   login();
+  // }, []);
 
   const columns = [
     {
@@ -351,7 +331,7 @@ function Newtable() {
   ];
 
   const table = useReactTable({
-    data,
+    data: messages,
     columns,
     getRowCanExpand: (row) => true,
     getRowId: (row) => row.id,
@@ -366,7 +346,7 @@ function Newtable() {
     },
     meta: {
       removeRow: (rowId) => {
-        setData((old) => old.filter((row) => row.id != rowId));
+        removeMessage(rowId);
         setRowSelection((prev) => {
           const updated = { ...prev };
           delete updated[rowId];
