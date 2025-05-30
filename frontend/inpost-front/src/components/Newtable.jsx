@@ -4,8 +4,8 @@ import {
   flexRender,
   getExpandedRowModel,
 } from '@tanstack/react-table';
-import { useState, useEffect, useRef } from 'react';
-import { parseISO, format, previousDay } from 'date-fns';
+import { useState } from 'react';
+import { parseISO, format } from 'date-fns';
 import {
   LuExternalLink,
   LuChevronDown,
@@ -17,190 +17,17 @@ import { VscCircleLargeFilled } from 'react-icons/vsc';
 import { RiDeleteBin7Fill } from 'react-icons/ri';
 import React from 'react';
 import IndeterminateCheckbox from './IndeterminateCheckbox';
-import {
-  loginUser,
-  fetchMailboxes,
-  fetchMessages,
-  fetchMessage,
-} from '../services/api';
-
-const mailbox = [
-  {
-    id: '1',
-    email: 'alice@example.com',
-    subject: 'Meeting Reminder bdbdbdfbfbdbdfbfdbdfbdb',
-    content: 'Just a reminder about the meeting tomorrow at 10am.',
-    date: '2025-05-21T08:15:00+00:00',
-    seen: false,
-    hasAttachments: false,
-  },
-  {
-    id: '2',
-    email: 'bob@example.com',
-    subject: 'Invoice Attached',
-    content: "Please find the invoice attached for last month's services.",
-    date: '2025-05-20T13:45:22+00:00',
-    seen: false,
-    hasAttachments: true,
-  },
-  {
-    id: '3',
-    email: 'carol@example.org',
-    subject: 'Vacation Request',
-    content: 'I would like to request vacation time for next week.',
-    date: '2025-05-19T10:30:12+00:00',
-    seen: false,
-    hasAttachments: false,
-  },
-  {
-    id: '4',
-    email: 'dave@company.com',
-    subject: 'System Downtime',
-    content: 'The system will be undergoing maintenance tonight.',
-    date: '2025-05-18T22:05:44+00:00',
-    seen: true,
-    hasAttachments: false,
-  },
-  {
-    id: '5',
-    email: 'emma@domain.net',
-    subject: 'Feedback Request',
-    content: 'We’d love your feedback on our new service update.',
-    date: '2025-05-17T14:23:11+00:00',
-    seen: false,
-    hasAttachments: false,
-  },
-  {
-    id: '6',
-    email: 'frank@corp.org',
-    subject: 'Weekly Report',
-    content:
-      'Attached is the weekly report. Let me know if you have questions.',
-    date: '2025-05-16T09:10:30+00:00',
-    seen: true,
-    hasAttachments: true,
-  },
-  {
-    id: '7',
-    email: 'grace@example.com',
-    subject: 'Happy Birthday!',
-    content: 'Wishing you a fantastic birthday filled with joy!',
-    date: '2025-05-15T18:55:00+00:00',
-    seen: true,
-    hasAttachments: false,
-  },
-  {
-    id: '8',
-    email: 'hank@bizmail.com',
-    subject: 'Follow-up Needed',
-    content:
-      'Following up on our last conversation. Can you send the document?',
-    date: '2025-05-14T11:25:33+00:00',
-    seen: false,
-    hasAttachments: false,
-  },
-  {
-    id: '9',
-    email: 'irene@startup.io',
-    subject: 'Launch Plan',
-    content: 'Here is the final draft of the launch plan. Feedback welcome.',
-    date: '2025-05-13T07:50:15+00:00',
-    seen: true,
-    hasAttachments: true,
-  },
-  {
-    id: '10',
-    email: 'jack@webmail.co',
-    subject: 'New Opportunity',
-    content: 'We have an exciting opportunity you might be interested in.',
-    date: '2025-05-12T15:40:55+00:00',
-    seen: false,
-    hasAttachments: false,
-  },
-];
-
-let userId;
+import { useExpandMessage } from '../hooks/useExpandMessage';
 
 function Newtable({ messages, removeMessage, mailboxId }) {
   const [rowSelection, setRowSelection] = useState({});
-  const [expanded, setExpanded] = useState({});
-  // загружанное письмо
-  const [messageList, setMessageList] = useState({});
-  // загружаемое письмо
-  const [loadingList, setLoadingList] = useState({});
-
-  // ВЫНЕСТИ: переключает состояние row (не скачано, запустить скачивание, в процессе)
-  const messageFetchingHandler = async (rowId) => {
-    if (expanded[rowId]) {
-      // extended
-      if (loadingList[rowId]) {
-        // грузится
-        return;
-      } else {
-        // уже загружено, появился шеврон - закрыть раскрытый row
-        setExpanded((prev) => {
-          const updated = { ...prev };
-          delete updated[rowId];
-          return updated;
-        });
-        return;
-      }
-    } else {
-      // NONextended
-      setExpanded((prev) => ({ ...prev, [rowId]: true }));
-      // нет сообщения
-      if (!messageList[rowId]) {
-        // включить загрузку
-        setLoadingList((prev) => ({ ...prev, [rowId]: true }));
-        const { text } = await fetchMessage(mailboxId, rowId);
-        console.log('DEBUG: ', text);
-        // сохранить message
-        setMessageList((prev) => ({
-          ...prev,
-          [rowId]: { content: text },
-        }));
-        // убрать из загрузки
-        setLoadingList((prev) => {
-          const updated = { ...prev };
-          delete updated[rowId];
-          return updated;
-        });
-        return;
-      }
-      // есть сообщение
-      return;
-    }
-  };
-
-  // useEffect(() => {
-  //   async function login() {
-  //     try {
-  //       const { userId: id } = await loginUser({
-  //         login: 'jepe',
-  //         password: '123321',
-  //       });
-  //       console.log('Login successful:', id); // <-- result here
-  //       userId = id;
-
-  //       const mailboxes = await fetchMailboxes(id);
-  //       console.log('Mailbox successful:', mailboxes); // <-- result here
-
-  //       const initialMailbox =
-  //         mailboxes.activeMailboxes[0] || mailboxes.inactiveMailboxes[0];
-  //       console.log('DEBUG initialMailbox: ', initialMailbox);
-
-  //       mailboxId.current = initialMailbox._id;
-
-  //       const messages = await fetchMessages(initialMailbox._id);
-  //       console.log('Messages successful:', messages); // <-- result here
-  //       setData(messages['hydra:member']);
-  //     } catch (error) {
-  //       console.error('Error:', error.message);
-  //     }
-  //   }
-
-  //   login();
-  // }, []);
+  const [
+    expanded,
+    messageList,
+    loadingList,
+    toggleExpandMessage,
+    deleteExpandMessage,
+  ] = useExpandMessage();
 
   const columns = [
     {
@@ -250,7 +77,7 @@ function Newtable({ messages, removeMessage, mailboxId }) {
       id: 'actions',
       cell: ({ row, table }) => {
         const handleToggleExpand = () => {
-          messageFetchingHandler(row.id);
+          toggleExpandMessage(row.id, mailboxId);
         };
 
         return (
@@ -305,16 +132,7 @@ function Newtable({ messages, removeMessage, mailboxId }) {
               {row.getIsSelected() && (
                 <RiDeleteBin7Fill
                   onClick={() => {
-                    setMessageList((prev) => {
-                      const updated = { ...prev };
-                      delete updated[row.id];
-                      return updated;
-                    });
-                    setExpanded((prev) => {
-                      const updated = { ...prev };
-                      delete updated[row.id];
-                      return updated;
-                    });
+                    deleteExpandMessage(row.id);
                     table.options.meta.removeRow(row.id);
                   }}
                   className='text-red-600 text-lg'
@@ -339,7 +157,6 @@ function Newtable({ messages, removeMessage, mailboxId }) {
       expanded,
       rowSelection,
     },
-    onExpandedChange: setExpanded,
     onRowSelectionChange: setRowSelection,
     defaultColumn: {
       size: 0,
@@ -393,7 +210,7 @@ function Newtable({ messages, removeMessage, mailboxId }) {
                   </td>
                 ))}
               </tr>
-
+              {/* Вот здесь дисплеить */}
               {row.getIsExpanded() && messageList[row.id]?.content && (
                 <tr>
                   <td colSpan={row.getVisibleCells().length}>
