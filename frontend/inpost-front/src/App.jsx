@@ -13,7 +13,6 @@ function App() {
 
   return (
     <div className='mx-10'>
-      JEPE 🤌
       <Dashboard />
     </div>
   );

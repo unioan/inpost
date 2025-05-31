@@ -97,14 +97,14 @@ function Newtable({ messages, removeMessage, mailboxId }) {
                     className='text-lg font-semibold'
                   />
                   <span className='absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap'>
-                    Open message
+                    Open
                   </span>
                 </div>
               )}
               <div className='relative group'>
                 <LuExternalLink className='text-lg' />
                 <span className='absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap'>
-                  Open in separate tab
+                  Separate tab
                 </span>
               </div>
             </div>
@@ -176,7 +176,7 @@ function Newtable({ messages, removeMessage, mailboxId }) {
   });
 
   return (
-    <>
+    <div className='h-screen w-full overflow-y-auto px-2'>
       <table className='w-full table-fixed'>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -205,7 +205,7 @@ function Newtable({ messages, removeMessage, mailboxId }) {
             <React.Fragment key={row.id}>
               <tr className='border-b-[0.1px] border-black'>
                 {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} style={{ maxWidth: cell.column.getSize() }}>
+                  <td key={cell.id} style={{ maxWidth: cell.column.getSize(),position: 'relative', overflow: 'visible' }}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
@@ -224,7 +224,7 @@ function Newtable({ messages, removeMessage, mailboxId }) {
           ))}
         </tbody>
       </table>
-    </>
+    </div>
   );
 }
 

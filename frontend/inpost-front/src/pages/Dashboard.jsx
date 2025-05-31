@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { useFetchMessages } from '../hooks/useFetchMessages';
 import { useFetchMailboxes } from '../hooks/useFetchMailbox';
-import Newtable from '../components/Newtable';
 import { useParams } from 'react-router-dom';
+import Newtable from '../components/Newtable';
+import MailboxesSidebar from '../components/MailboxesSidebar';
 
 function Dashboard() {
   const userId = '681f25f604b58c8834e2a794';
@@ -25,13 +26,17 @@ function Dashboard() {
   }, []);
 
   return (
-    <>
+    <div className='flex gap-10'>
+      <MailboxesSidebar
+        {...{ currentMailbox, activeMailboxes, inactiveMailboxes }}
+        className='table-fixed w-46'
+      />
       <Newtable
         messages={messages}
         removeMessage={removeMessage}
         mailboxId={currentMailbox?._id}
       />
-    </>
+    </div>
   );
 }
 
