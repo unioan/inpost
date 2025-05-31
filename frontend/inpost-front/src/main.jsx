@@ -5,7 +5,7 @@ import App from './App.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import './index.css';
 
-// Dashboard не работает пока из-за того что ему нужен id
+// Dashboard не работает пока из-за того что ему нужен mailboxId
 const router = createBrowserRouter([
   { path: '/', element: <App /> },
   { path: '/dashboard', element: <Dashboard /> },
