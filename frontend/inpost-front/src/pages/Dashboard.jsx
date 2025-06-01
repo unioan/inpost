@@ -12,6 +12,7 @@ function Dashboard() {
     currentMailbox,
     inactiveMailboxes,
     activeMailboxes,
+    isMailboxesLoading,
     getMailboxes,
     selectMailbox,
   ] = useFetchMailboxes(userId);
@@ -39,6 +40,7 @@ function Dashboard() {
           activeMailboxes,
           inactiveMailboxes,
           handleMailboxSelection,
+          isMailboxesLoading,
         }}
       />
       <Newtable
