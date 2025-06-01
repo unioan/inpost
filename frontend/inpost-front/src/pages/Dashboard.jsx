@@ -26,10 +26,9 @@ function Dashboard() {
   }, []);
 
   return (
-    <div className='flex gap-10'>
+    <div className='flex gap-5 h-screen overflow-y-auto mr-5'>
       <MailboxesSidebar
         {...{ currentMailbox, activeMailboxes, inactiveMailboxes }}
-        className='table-fixed w-46'
       />
       <Newtable
         messages={messages}

@@ -205,7 +205,12 @@ function Newtable({ messages, removeMessage, mailboxId }) {
             <React.Fragment key={row.id}>
               <tr className='border-b-[0.1px] border-black'>
                 {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} style={{ maxWidth: cell.column.getSize(),position: 'relative', overflow: 'visible' }}>
+                  <td
+                    key={cell.id}
+                    style={{
+                      maxWidth: cell.column.getSize(),
+                    }}
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}

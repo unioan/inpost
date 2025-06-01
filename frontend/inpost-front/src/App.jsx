@@ -11,11 +11,7 @@ function App() {
     })();
   }, []);
 
-  return (
-    <div className='mx-10'>
-      <Dashboard />
-    </div>
-  );
+  return <Dashboard />;
 }
 
 export default App;
