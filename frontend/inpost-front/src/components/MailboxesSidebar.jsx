@@ -1,3 +1,5 @@
+import { parseISO, format } from 'date-fns';
+
 function MailboxesSidebar({
   currentMailbox,
   activeMailboxes,
@@ -18,9 +20,9 @@ function MailboxesSidebar({
       </div>
 
       {/* Выводим информацию вне таблицы */}
-      <div className='bg-neutral-200 border-b-[0.1px] flex justify-between'>
-        <p className='ml-4'>active mailboxes:</p>
-        <p className='mr-4'>{activeMailboxes.length}</p>
+      <div className='bg-neutral-200 border-b-[0.1px] flex justify-between py-1'>
+        <p className='ml-4 font-medium text-xs'>active mailboxes:</p>
+        <p className='mr-4 font-medium text-xs'>{activeMailboxes.length}</p>
       </div>
 
       <table className='ml-4'>
@@ -33,18 +35,31 @@ function MailboxesSidebar({
         </tbody>
       </table>
 
-      <div className='bg-neutral-200 border-b-[0.1px] flex justify-between'>
-        <p className='ml-4'>inactive mailboxes:</p>
-        <p className='mr-4'>{inactiveMailboxes.length}</p>
+      <div className='bg-neutral-200 border-b-[0.1px] flex justify-between py-1'>
+        <p className='ml-4 font-medium text-xs'>inactive mailboxes:</p>
+        <p className='mr-4 font-medium text-xs'>{inactiveMailboxes.length}</p>
       </div>
 
       <table className='ml-4'>
         <tbody>
-          {inactiveMailboxes.map((mailbox) => (
-            <tr key={mailbox._id}>
-              <td>Inactive JEPE</td>
-            </tr>
-          ))}
+          {inactiveMailboxes.map((mailbox) => {
+            const content = mailbox.expiresAt;
+            const date = parseISO(content);
+            const formatted = format(date, 'd MMM H:mm');
+            return (
+              <tr key={mailbox._id} className='text-sm'>
+                <td>
+                  <p className='font-light'>{mailbox.mailboxAddress}</p>
+                  <div className='mb-2'>
+                    <span className='text-xs font-light'>expired </span>
+                    <spans className='text-xs font-medium text-black/40'>
+                      {formatted}
+                    </spans>
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
