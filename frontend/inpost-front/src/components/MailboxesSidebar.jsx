@@ -1,6 +1,7 @@
 import { formatTime } from '../utils';
 import SelectedMailboxCell from './SelectedMailboxCell';
 import MailboxCell from './MailboxCell';
+import MailboxTableHeader from './MailboxTableHeader';
 
 function MailboxesSidebar({
   currentMailbox,
@@ -16,13 +17,11 @@ function MailboxesSidebar({
         currentMailbox={currentMailbox}
       />
 
-      {/* Выводим информацию вне таблицы */}
-      <div className='border-b-[0.1px] flex justify-between py-1'>
-        <p className='ml-4 font-medium text-xs'>active mailboxes:</p>
-        <p className='mr-4 font-medium text-xs'>
-          {isMailboxesLoading || activeMailboxes.length}
-        </p>
-      </div>
+      <MailboxTableHeader
+        type='active'
+        isMailboxesLoading={isMailboxesLoading}
+        mailboxes={activeMailboxes}
+      />
       <table className='ml-4'>
         <tbody>
           {activeMailboxes.map((mailbox) => (
@@ -45,12 +44,11 @@ function MailboxesSidebar({
         </tbody>
       </table>
 
-      <div className='border-b-[0.1px] flex justify-between py-1'>
-        <p className='ml-4 font-medium text-xs'>inactive mailboxes:</p>
-        <p className='mr-4 font-medium text-xs'>
-          {isMailboxesLoading || inactiveMailboxes.length}
-        </p>
-      </div>
+      <MailboxTableHeader
+        type='inactive'
+        isMailboxesLoading={isMailboxesLoading}
+        mailboxes={inactiveMailboxes}
+      />
       <table className='ml-4 table-fixed w-full'>
         <tbody>
           {isMailboxesLoading
