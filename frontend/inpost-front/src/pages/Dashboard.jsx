@@ -25,10 +25,21 @@ function Dashboard() {
     })();
   }, []);
 
+  const handleMailboxSelection = async (mailbox) => {
+    console.log(mailbox)
+    selectMailbox(mailbox);
+    await refetchMessages(mailbox._id);
+  };
+
   return (
     <div className='flex gap-5 h-screen overflow-y-auto mr-5'>
       <MailboxesSidebar
-        {...{ currentMailbox, activeMailboxes, inactiveMailboxes }}
+        {...{
+          currentMailbox,
+          activeMailboxes,
+          inactiveMailboxes,
+          handleMailboxSelection,
+        }}
       />
       <Newtable
         messages={messages}
