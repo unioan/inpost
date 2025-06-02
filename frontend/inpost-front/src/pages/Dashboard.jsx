@@ -7,7 +7,8 @@ import MailboxesSidebar from '../components/MailboxesSidebar';
 
 function Dashboard() {
   const userId = '681f25f604b58c8834e2a794';
-  const [messages, refetchMessages, removeMessage] = useFetchMessages();
+  const [messages, isMessagesLoading, refetchMessages, removeMessage] =
+    useFetchMessages();
   const [
     currentMailbox,
     inactiveMailboxes,
@@ -27,7 +28,7 @@ function Dashboard() {
   }, []);
 
   const handleMailboxSelection = async (mailbox) => {
-    console.log(mailbox)
+    console.log(mailbox);
     selectMailbox(mailbox);
     await refetchMessages(mailbox._id);
   };
@@ -45,6 +46,7 @@ function Dashboard() {
       />
       <Newtable
         messages={messages}
+        isMessagesLoading={isMessagesLoading}
         removeMessage={removeMessage}
         mailboxId={currentMailbox?._id}
       />

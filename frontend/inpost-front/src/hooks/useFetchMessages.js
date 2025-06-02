@@ -3,10 +3,13 @@ import { fetchMessages } from "../services/api";
 
 export const useFetchMessages = () => {
  const [messages, setMessages] = useState([])
+ const [isMessagesLoading, setMessagesLoading] = useState(false)
 
  // перередерить список сообщений дргого ящика
  const refetchMessages = async (newMailboxId) => {
+  setMessagesLoading(true)
   const messages = await fetchMessages(newMailboxId)
+  setMessagesLoading(false)
   setMessages(messages['hydra:member'])
  }
 
@@ -17,5 +20,5 @@ export const useFetchMessages = () => {
   })
  }
 
- return [messages, refetchMessages, removeMessage]
+ return [messages, isMessagesLoading, refetchMessages, removeMessage]
 }

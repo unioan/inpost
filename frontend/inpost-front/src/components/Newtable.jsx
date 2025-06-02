@@ -18,8 +18,9 @@ import { RiDeleteBin7Fill } from 'react-icons/ri';
 import React from 'react';
 import IndeterminateCheckbox from './IndeterminateCheckbox';
 import { useExpandMessage } from '../hooks/useExpandMessage';
+import MailSkeletonRow from './MailSkeletonRow';
 
-function Newtable({ messages, removeMessage, mailboxId }) {
+function Newtable({ messages, isMessagesLoading, removeMessage, mailboxId }) {
   const [rowSelection, setRowSelection] = useState({});
   const [
     expanded,
@@ -201,32 +202,39 @@ function Newtable({ messages, removeMessage, mailboxId }) {
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <React.Fragment key={row.id}>
-              <tr className='border-b-[0.1px] border-black'>
-                {row.getVisibleCells().map((cell) => (
-                  <td
-                    key={cell.id}
-                    style={{
-                      maxWidth: cell.column.getSize(),
-                    }}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-              {/* Вот здесь дисплеить */}
-              {row.getIsExpanded() && messageList[row.id]?.content && (
-                <tr>
-                  <td colSpan={row.getVisibleCells().length}>
-                    <div className='py-4 px-12 bg-gray-100'>
-                      Expanded content for: {messageList[row.id]?.content}
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </React.Fragment>
-          ))}
+          {isMessagesLoading
+            ? Array.from({ length: 8 }).map((_, index) => (
+                <MailSkeletonRow key={index} />
+              ))
+            : table.getRowModel().rows.map((row) => (
+                <React.Fragment key={row.id}>
+                  <tr className='border-b-[0.1px] border-black'>
+                    {row.getVisibleCells().map((cell) => (
+                      <td
+                        key={cell.id}
+                        style={{
+                          maxWidth: cell.column.getSize(),
+                        }}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                  {/* Вот здесь дисплеить */}
+                  {row.getIsExpanded() && messageList[row.id]?.content && (
+                    <tr>
+                      <td colSpan={row.getVisibleCells().length}>
+                        <div className='py-4 px-12 bg-gray-100'>
+                          Expanded content for: {messageList[row.id]?.content}
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              ))}
         </tbody>
       </table>
     </div>
