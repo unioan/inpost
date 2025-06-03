@@ -37,6 +37,7 @@ function MailboxesSidebar({
                 return (
                   <MailboxCell
                     key={mailbox._id}
+                    type='active'
                     mailbox={mailbox}
                     isMailboxesLoading={isMailboxesLoading}
                     handleMailboxSelection={handleMailboxSelection}
@@ -66,6 +67,7 @@ function MailboxesSidebar({
                 return (
                   <MailboxCell
                     key={mailbox._id}
+                    type='inactive'
                     mailbox={mailbox}
                     isMailboxesLoading={isMailboxesLoading}
                     handleMailboxSelection={handleMailboxSelection}

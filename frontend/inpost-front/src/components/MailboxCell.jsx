@@ -1,6 +1,11 @@
 import { formatTime } from '../utils';
 
-function MailboxCell({ isMailboxesLoading, mailbox, handleMailboxSelection }) {
+function MailboxCell({
+  type,
+  isMailboxesLoading,
+  mailbox,
+  handleMailboxSelection,
+}) {
   return (
     <>
       <tr className='text-sm cursor-pointer'>
@@ -19,7 +24,9 @@ function MailboxCell({ isMailboxesLoading, mailbox, handleMailboxSelection }) {
           >
             <p className='font-light'>{mailbox.mailboxAddress}</p>
             <div className='mb-3'>
-              <span className='text-xs font-light'>until </span>
+              <span className='text-xs font-light'>
+                {type == 'active' ? 'until ' : 'expired '}
+              </span>
               <span className='text-xs font-medium text-black/40'>
                 {formatTime(mailbox.expiresAt)}
               </span>

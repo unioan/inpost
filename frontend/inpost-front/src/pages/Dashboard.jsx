@@ -44,12 +44,17 @@ function Dashboard() {
           isMailboxesLoading,
         }}
       />
-      <Newtable
-        messages={messages}
-        isMessagesLoading={isMessagesLoading}
-        removeMessage={removeMessage}
-        mailboxId={currentMailbox?._id}
-      />
+      <div className='h-screen w-full overflow-y-auto px-2'>
+        <div className='h-15.5 flex flex-col justify-center items-start'>
+          <button className='border px-4 py-2 rounded-lg'>New Mailbox</button>
+        </div>
+        <Newtable
+          messages={messages}
+          isMessagesLoading={isMessagesLoading}
+          removeMessage={removeMessage}
+          mailboxId={currentMailbox?._id}
+        />
+      </div>
     </div>
   );
 }

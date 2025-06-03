@@ -177,7 +177,7 @@ function Newtable({ messages, isMessagesLoading, removeMessage, mailboxId }) {
   });
 
   return (
-    <div className='h-screen w-full overflow-y-auto px-2'>
+    
       <table className='w-full table-fixed'>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -237,7 +237,7 @@ function Newtable({ messages, isMessagesLoading, removeMessage, mailboxId }) {
               ))}
         </tbody>
       </table>
-    </div>
+    
   );
 }
 
