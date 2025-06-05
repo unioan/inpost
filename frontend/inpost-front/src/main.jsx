@@ -4,15 +4,17 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import './index.css';
+import Auth from './pages/Auth.jsx';
 
 // Dashboard не работает пока из-за того что ему нужен mailboxId
 const router = createBrowserRouter([
   { path: '/', element: <App /> },
   { path: '/dashboard', element: <Dashboard /> },
+  { path: '/auth', element: <Auth /> },
 ]);
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router}/>
+    <RouterProvider router={router} />
   </StrictMode>
 );
