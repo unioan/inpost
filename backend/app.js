@@ -15,7 +15,8 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(session({
- secret: "jepe",
+ name: "inpost.sid",
+ secret: "r#Sg7UH%iR@pdLd0cOzQaThicxGEQ",
  saveUninitialized: false,
  resave: false,
  cookie: {
