@@ -38,11 +38,11 @@ function FormAuth({
       </div>
 
       <div className='flex flex-col justify-between'>
-        <h3 className='text-xl font-bold mb-2'>
+        <h3 className='text-xl font-bold'>
           {type === 'login' ? 'Log in' : 'Sign up'}
         </h3>
 
-        <p className={`text-xs mb-2 ${type === 'login' ? '' : 'invisible'}`}>
+        <p className={`text-xs mb-6 ${type === 'login' ? '' : 'invisible'}`}>
           Aren't you with us yet?
           <span
             onClick={handleCreateAccount}

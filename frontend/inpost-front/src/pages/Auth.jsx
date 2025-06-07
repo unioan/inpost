@@ -1,31 +1,63 @@
 import { useState } from 'react';
 import FormTextInput from '../components/FormTextInput';
 import FormAuth from '../components/FormAuth';
-import { FaCircleChevronLeft } from 'react-icons/fa6';
 import { useForm } from 'react-hook-form';
+import { useAuth } from '../components/hoc/AuthProvider';
+import { loginUser } from '../services/api';
+import { useNavigate } from 'react-router-dom';
 
 function Auth() {
+  const navigate = useNavigate();
+
+  const { userId, saveUserId, removeUserId } = useAuth();
+  const [authError, setAuthError] = useState('');
+
   const [formType, setFormType] = useState('login');
   const {
     register,
     formState: { errors },
     handleSubmit,
     watch,
+    reset,
   } = useForm({ mode: 'onBlur' });
-
   const password = watch('signupPassword');
 
   const handleCreateAccount = () => {
+    reset();
     setFormType('signup');
   };
 
   const handleSignupBack = () => {
+    reset();
     setFormType('login');
   };
 
   // евент хендлер on submit общий
-  const onSubmit = (data) => {
-    console.log('DEBUG USE FORM LOGIN: ', data);
+  const onSubmit = async (data) => {
+    if (formType === 'login') {
+      const { login, password } = data;
+      try {
+        const { userId: backendUserId } = await loginUser({ login, password });
+        const userID = saveUserId(backendUserId);
+        navigate('/dashboard');
+        console.log(
+          'DEBUG type LOGIN: ',
+          `backendUserId: ${backendUserId}`,
+          `userID" ${userID}`
+        );
+      } catch (error) {
+        console.log('DEBUG: catch error - ', error);
+        const { message } = error.response.data;
+        console.log('DEBUG: catch error MESSAGE - ', message);
+        setAuthError(message);
+      }
+    } else if (formType === 'signup') {
+      console.log(
+        'DEBUG type SIGNUP: ',
+        `data.signupLogin: ${data.signupLogin.trim()}`,
+        `data.signupPassword: ${data.signupPassword.trim()}`
+      );
+    }
   };
 
   return (
@@ -35,7 +67,7 @@ function Auth() {
           type='login'
           handleSubmit={handleSubmit(onSubmit)}
           handleCreateAccount={handleCreateAccount}
-          authError=''
+          authError={authError}
         >
           <div className='flex flex-col gap-4'>
             <FormTextInput

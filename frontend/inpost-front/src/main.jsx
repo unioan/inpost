@@ -5,16 +5,27 @@ import App from './App.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import './index.css';
 import Auth from './pages/Auth.jsx';
+import { RequireAuth } from './components/hoc/RequireAuth.jsx';
+import { AuthProvider } from './components/hoc/AuthProvider.jsx';
 
 // Dashboard не работает пока из-за того что ему нужен mailboxId
 const router = createBrowserRouter([
   { path: '/', element: <App /> },
-  { path: '/dashboard', element: <Dashboard /> },
+  {
+    path: '/dashboard',
+    element: (
+      <RequireAuth>
+        <Dashboard />
+      </RequireAuth>
+    ),
+  },
   { path: '/auth', element: <Auth /> },
 ]);
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </StrictMode>
 );
