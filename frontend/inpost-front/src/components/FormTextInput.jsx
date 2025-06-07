@@ -24,7 +24,7 @@ function FormTextInput({
         />
         {errors?.[name] && (
           <div className='absolute top-14 flex text-xs items-end ml-2'>
-            <FaRegCircleXmark className='text-red-500 pb-[2px]' />
+            <FaRegCircleXmark className='text-red-500 pb-[1px]' />
             <p className={`text-red-500  text-[10px] ml-1 ${color}`}>
               {errors?.[name].message || 'required'}
             </p>
