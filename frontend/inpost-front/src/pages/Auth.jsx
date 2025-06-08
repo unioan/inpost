@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 function Auth() {
   const navigate = useNavigate();
 
-  const { userId, saveUserId, removeUserId } = useAuth();
+  const { userId, login, saveToStorage, removeFromStorage } = useAuth();
   const [authError, setAuthError] = useState('');
 
   const [formType, setFormType] = useState('login');
@@ -38,7 +38,8 @@ function Auth() {
       const { login, password } = data;
       try {
         const { userId: backendUserId } = await loginUser({ login, password });
-        saveUserId(backendUserId);
+        saveToStorage('userId', backendUserId);
+        saveToStorage('login', login);
         navigate('/dashboard');
       } catch (error) {
         const { message } = error.response.data;

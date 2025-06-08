@@ -15,6 +15,11 @@ export async function checkAuthentication() {
  return res;
 }
 
+export async function createNewMailbox(userId, login) {
+ const res = await api.post('/boxes', { userId, login });
+ return res.data;
+}
+
 export async function fetchMailboxes(userId) {
  const res = await api.get(`/boxes/${userId}`);
  return res.data;

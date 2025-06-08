@@ -5,18 +5,29 @@ export const AuthContex = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [userId, setUserId] = useLocalStorage('userId', null);
+  const [login, setLogin] = useLocalStorage('login', null);
 
-  const saveUserId = (id) => {
-    setUserId(id);
-    return id;
+  const saveToStorage = (key, value) => {
+    if (key === 'userId') {
+      setUserId(value);
+    } else if (key === 'login') {
+      setLogin(value);
+    }
+    return value;
   };
 
-  const removeUserId = () => {
-    setUserId(null);
+  const removeFromStorage = (key) => {
+    if (key === 'userId') {
+      setUserId(null);
+    } else if (key === 'login') {
+      setLogin(null);
+    }
   };
 
   return (
-    <AuthContex.Provider value={{ userId, saveUserId, removeUserId }}>
+    <AuthContex.Provider
+      value={{ userId, login, saveToStorage, removeFromStorage }}
+    >
       {children}
     </AuthContex.Provider>
   );

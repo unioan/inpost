@@ -39,6 +39,10 @@ function Dashboard() {
     await refetchMessages(mailbox._id);
   };
 
+  const handleMailboxCreation = async () => {
+    
+  };
+
   return (
     <div className='flex gap-5 h-screen overflow-y-auto mr-5'>
       <MailboxesSidebar
@@ -52,7 +56,12 @@ function Dashboard() {
       />
       <div className='h-screen w-full overflow-y-auto px-2'>
         <div className='h-15.5 flex flex-col justify-center items-start'>
-          <button className='border px-4 py-2 rounded-lg'>New Mailbox</button>
+          <button
+            className='border border-[#C2E812] px-4 py-2 rounded-lg hover:bg-[#C2E812] hover:text-white transition-colors cursor-pointer'
+            onClick={handleMailboxCreation}
+          >
+            New Mailbox
+          </button>
         </div>
         <Newtable
           messages={messages}
