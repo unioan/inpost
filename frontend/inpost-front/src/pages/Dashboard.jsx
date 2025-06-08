@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useFetchMessages } from '../hooks/useFetchMessages';
 import { useFetchMailboxes } from '../hooks/useFetchMailbox';
 import { useParams } from 'react-router-dom';
@@ -18,12 +18,18 @@ function Dashboard() {
     selectMailbox,
   ] = useFetchMailboxes(userId);
 
+  // без этого при нажатии кнопки обновить страницу, список сообщений рендерится два раза
+  const isMounted = useRef(false);
+
   useEffect(() => {
     (async () => {
       const { activeMailboxes, inactiveMailboxes } = await getMailboxes();
       const autoselectedMailbox = activeMailboxes[0] || inactiveMailboxes[0];
       selectMailbox(autoselectedMailbox);
-      await refetchMessages(autoselectedMailbox?._id);
+      if (!isMounted.current) {
+        isMounted.current = true;
+        await refetchMessages(autoselectedMailbox?._id);
+      }
     })();
   }, []);
 
