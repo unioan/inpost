@@ -10,6 +10,11 @@ export async function loginUser(credentials) {
  return res.data;
 }
 
+export async function logout() {
+ const res = await api.post('/users/logout');
+ return res.data;
+}
+
 export async function checkAuthentication() {
  const res = await api.get('/users/login-status');
  return res;

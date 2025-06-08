@@ -6,8 +6,13 @@ import Newtable from '../components/Newtable';
 import MailboxesSidebar from '../components/MailboxesSidebar';
 import { ImExit } from 'react-icons/im';
 import { FaCirclePlus } from 'react-icons/fa6';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../components/hoc/AuthProvider';
+import { logout } from '../services/api';
 
 function Dashboard() {
+  const { removeFromStorage } = useAuth();
+  const navigate = useNavigate();
   const userId = '681f25f604b58c8834e2a794';
   const [messages, isMessagesLoading, refetchMessages, removeMessage] =
     useFetchMessages();
@@ -42,6 +47,17 @@ function Dashboard() {
   };
 
   const handleMailboxCreation = async () => {};
+  const handleLogout = async () => {
+    try {
+      logout();
+      removeFromStorage('userId');
+      removeFromStorage('login');
+      navigate('/auth');
+      console.log('DEBUG :', 'logout happened');
+    } catch (error) {
+      console.log('DEBUG Dashboard:', 'handleLogout error', error);
+    }
+  };
 
   return (
     <div className='flex gap-5 h-screen overflow-y-auto mr-5'>
@@ -69,11 +85,11 @@ function Dashboard() {
           <div className='flex items-center text-[16px] hover:text-[#C2E812] transition-colors cursor-pointer'>
             <button
               className='px-2 py-2 rounded-xl cursor-pointer'
-              onClick={handleMailboxCreation}
+              onClick={handleLogout}
             >
               Log out
             </button>
-            <ImExit/>
+            <ImExit />
           </div>
         </div>
         <Newtable
