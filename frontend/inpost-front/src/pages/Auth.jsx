@@ -38,17 +38,10 @@ function Auth() {
       const { login, password } = data;
       try {
         const { userId: backendUserId } = await loginUser({ login, password });
-        const userID = saveUserId(backendUserId);
+        saveUserId(backendUserId);
         navigate('/dashboard');
-        console.log(
-          'DEBUG type LOGIN: ',
-          `backendUserId: ${backendUserId}`,
-          `userID" ${userID}`
-        );
       } catch (error) {
-        console.log('DEBUG: catch error - ', error);
         const { message } = error.response.data;
-        console.log('DEBUG: catch error MESSAGE - ', message);
         setAuthError(message);
       }
     } else if (formType === 'signup') {

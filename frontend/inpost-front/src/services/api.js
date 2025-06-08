@@ -10,6 +10,11 @@ export async function loginUser(credentials) {
  return res.data;
 }
 
+export async function checkAuthentication() {
+ const res = await api.get('/users/login-status');
+ return res;
+}
+
 export async function fetchMailboxes(userId) {
  const res = await api.get(`/boxes/${userId}`);
  return res.data;
@@ -20,7 +25,7 @@ export async function fetchMessages(mailboxId) {
  return res.data;
 }
 
-export async function fetchMessage(mailboxId,messageId) {
+export async function fetchMessage(mailboxId, messageId) {
  const res = await api.get(`/messages/${mailboxId}/${messageId}`);
  return res.data;
 }
