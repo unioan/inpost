@@ -4,6 +4,8 @@ import { useFetchMailboxes } from '../hooks/useFetchMailbox';
 import { useParams } from 'react-router-dom';
 import Newtable from '../components/Newtable';
 import MailboxesSidebar from '../components/MailboxesSidebar';
+import { ImExit } from 'react-icons/im';
+import { FaCirclePlus } from 'react-icons/fa6';
 
 function Dashboard() {
   const userId = '681f25f604b58c8834e2a794';
@@ -39,9 +41,7 @@ function Dashboard() {
     await refetchMessages(mailbox._id);
   };
 
-  const handleMailboxCreation = async () => {
-    
-  };
+  const handleMailboxCreation = async () => {};
 
   return (
     <div className='flex gap-5 h-screen overflow-y-auto mr-5'>
@@ -55,13 +55,26 @@ function Dashboard() {
         }}
       />
       <div className='h-screen w-full overflow-y-auto px-2'>
-        <div className='h-15.5 flex flex-col justify-center items-start'>
-          <button
-            className='border border-[#C2E812] px-4 py-2 rounded-lg hover:bg-[#C2E812] hover:text-white transition-colors cursor-pointer'
-            onClick={handleMailboxCreation}
-          >
-            New Mailbox
-          </button>
+        <div className='h-15.5 flex flex justify-between items-center'>
+          <div className='flex items-center text-[16px] hover:text-[#C2E812] transition-colors cursor-pointer'>
+            <FaCirclePlus />
+            <button
+              className='px-2 py-2 rounded-xl cursor-pointer'
+              onClick={handleMailboxCreation}
+            >
+              New Mailbox
+            </button>
+          </div>
+
+          <div className='flex items-center text-[16px] hover:text-[#C2E812] transition-colors cursor-pointer'>
+            <button
+              className='px-2 py-2 rounded-xl cursor-pointer'
+              onClick={handleMailboxCreation}
+            >
+              Log out
+            </button>
+            <ImExit/>
+          </div>
         </div>
         <Newtable
           messages={messages}
