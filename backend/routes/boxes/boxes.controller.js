@@ -54,14 +54,14 @@ async function createMailbox(req, res) {
  await addMailboxToActive(userId, mailbox)
 
  // возвращаем User
- res.status(201).json({ message: 'allrighty then' })
+ res.status(201).json({ mailbox })
 }
 
 async function getMailboxes(req, res) {
  if (!req.isAuthenticated()) throw UNAUTHENTICATED_ERROR
  const { userId } = req.params
  await getMailboxesListUpdated(userId)
- const mailboxList = await getMailboxesListSorted(userId) 
+ const mailboxList = await getMailboxesListSorted(userId)
  res.status(200).json(mailboxList)
 }
 
