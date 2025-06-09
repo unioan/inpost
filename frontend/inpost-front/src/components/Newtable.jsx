@@ -126,7 +126,7 @@ function Newtable({ messages, isMessagesLoading, removeMessage, mailboxId }) {
               <VscCircleLargeFilled
                 className='text-lg'
                 style={{
-                  color: '#02a9ea',
+                  color: '#C2E812',
                   visibility: row.original.seen ? 'hidden' : 'visible',
                 }}
               />
