@@ -8,10 +8,10 @@ import { ImExit } from 'react-icons/im';
 import { FaCirclePlus } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/hoc/AuthProvider';
-import { logout } from '../services/api';
+import { logout, createNewMailbox } from '../services/api';
 
 function Dashboard() {
-  const { removeFromStorage } = useAuth();
+  const { login, removeFromStorage } = useAuth();
   const navigate = useNavigate();
   const userId = '681f25f604b58c8834e2a794';
   const [messages, isMessagesLoading, refetchMessages, removeMessage] =
@@ -46,7 +46,14 @@ function Dashboard() {
     await refetchMessages(mailbox._id);
   };
 
-  const handleMailboxCreation = async () => {};
+  const handleMailboxCreation = async () => {
+    const result = await createNewMailbox(userId, login);
+    console.log(result);
+    const { activeMailboxes, inactiveMailboxes } = await getMailboxes();
+    const autoselectedMailbox = activeMailboxes[0] || inactiveMailboxes[0];
+    selectMailbox(autoselectedMailbox);
+  };
+
   const handleLogout = async () => {
     try {
       logout();
