@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useFetchMessages } from '../hooks/useFetchMessages';
 import { useFetchMailboxes } from '../hooks/useFetchMailbox';
 import { useParams } from 'react-router-dom';
@@ -8,7 +8,8 @@ import { ImExit } from 'react-icons/im';
 import { FaCirclePlus } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/hoc/AuthProvider';
-import { logout, createNewMailbox } from '../services/api';
+import { logout } from '../services/api';
+import { LuLoader } from 'react-icons/lu';
 
 function Dashboard() {
   const { login, removeFromStorage } = useAuth();
@@ -23,7 +24,9 @@ function Dashboard() {
     isMailboxesLoading,
     getMailboxes,
     selectMailbox,
+    createMailbox,
   ] = useFetchMailboxes(userId);
+  const [isCreatingMailbox, setCreatingMailbox] = useState(false);
 
   // без этого при нажатии кнопки обновить страницу, список сообщений рендерится два раза
   const isMounted = useRef(false);
@@ -47,11 +50,13 @@ function Dashboard() {
   };
 
   const handleMailboxCreation = async () => {
-    const result = await createNewMailbox(userId, login);
-    console.log(result);
-    const { activeMailboxes, inactiveMailboxes } = await getMailboxes();
-    const autoselectedMailbox = activeMailboxes[0] || inactiveMailboxes[0];
-    selectMailbox(autoselectedMailbox);
+    setCreatingMailbox(true);
+    console.log('DEBUG BEFORE isCreatingMailbox:', isCreatingMailbox);
+    const mailbox = await createMailbox(userId, login);
+    setCreatingMailbox(false);
+    console.log('DEBUG AFTER isCreatingMailbox:', isCreatingMailbox);
+    selectMailbox(mailbox);
+    await refetchMessages(mailbox._id);
   };
 
   const handleLogout = async () => {
@@ -79,12 +84,20 @@ function Dashboard() {
       />
       <div className='h-screen w-full overflow-y-auto px-2'>
         <div className='h-15.5 flex flex justify-between items-center'>
-          <div className='flex items-center text-[16px] hover:text-[#C2E812] transition-colors cursor-pointer'>
-            <FaCirclePlus />
-            <button
-              className='px-2 py-2 rounded-xl cursor-pointer'
-              onClick={handleMailboxCreation}
-            >
+          <div
+            className={`flex items-center text-[16px] cursor-pointer ${
+              isCreatingMailbox
+                ? 'opacity-50 cursor-not-allowed'
+                : 'hover:text-[#C2E812] transition-colors'
+            }`}
+            onClick={!isCreatingMailbox ? handleMailboxCreation : undefined}
+          >
+            {isCreatingMailbox ? (
+              <LuLoader className='text-lg animate-spin' />
+            ) : (
+              <FaCirclePlus />
+            )}
+            <button className={`px-2 py-2 rounded-xl cursor-pointer`}>
               New Mailbox
             </button>
           </div>
