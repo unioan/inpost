@@ -29,7 +29,7 @@ function MailboxCell({
             <div className='font-light flex pt-1'>
               <div
                 className={`flex items-center gap-1 group hover:bg-slate-50 p-1 rounded-lg`}
-                onClick={handleCopy}
+                onClick={(e) => {handleCopy(e, mailbox.mailboxAddress);}}
                 onMouseLeave={handleMouseMoveAway}
                 // onClick={(e) => {
                 //   e.stopPropagation();

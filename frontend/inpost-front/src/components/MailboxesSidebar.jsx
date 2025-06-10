@@ -13,10 +13,16 @@ function MailboxesSidebar({
 }) {
   const [isSelected, setIsSelected] = useState(false);
 
-  const handleCopy = (e) => {
+  const handleCopy = async (e, mailbox) => {
     e.stopPropagation();
+    console.log(mailbox)
+    await navigator.clipboard.writeText(mailbox);
     setIsSelected(true);
-    console.log('DEBUG mailname CLICKED, NEw location - MailboxesSidebar');
+    console.log(
+      'DEBUG mailname CLICKED, NEw location - MailboxesSidebar',
+      `\nmailboxis is,`,
+      mailbox
+    );
   };
 
   const handleMouseMoveAway = (e) => {
