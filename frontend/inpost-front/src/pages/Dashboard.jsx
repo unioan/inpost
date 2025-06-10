@@ -83,7 +83,7 @@ function Dashboard() {
         }}
       />
       <div className='h-screen w-full overflow-y-auto px-2'>
-        <div className='h-15.5 flex flex justify-between items-center'>
+        <div className='h-17.5 flex flex justify-between items-center'>
           <div
             className={`flex items-center text-[16px] cursor-pointer ${
               isCreatingMailbox
