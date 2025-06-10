@@ -1,4 +1,5 @@
 import { formatTime } from '../utils';
+import { useState } from 'react';
 import SelectedMailboxCell from './SelectedMailboxCell';
 import MailboxCell from './MailboxCell';
 import MailboxTableHeader from './MailboxTableHeader';
@@ -10,6 +11,18 @@ function MailboxesSidebar({
   handleMailboxSelection,
   isMailboxesLoading,
 }) {
+  const [isSelected, setIsSelected] = useState(false);
+
+  const handleCopy = (e) => {
+    e.stopPropagation();
+    setIsSelected(true);
+    console.log('DEBUG mailname CLICKED, NEw location - MailboxesSidebar');
+  };
+
+  const handleMouseMoveAway = (e) => {
+    setIsSelected(false);
+  };
+
   return (
     <div className='table-fixed w-105 h-screen overflow-y-auto'>
       <SelectedMailboxCell
@@ -41,6 +54,7 @@ function MailboxesSidebar({
                     mailbox={mailbox}
                     isMailboxesLoading={isMailboxesLoading}
                     handleMailboxSelection={handleMailboxSelection}
+                    handleCopy={handleCopy}
                   />
                 );
               })}
@@ -71,6 +85,9 @@ function MailboxesSidebar({
                     mailbox={mailbox}
                     isMailboxesLoading={isMailboxesLoading}
                     handleMailboxSelection={handleMailboxSelection}
+                    handleCopy={handleCopy}
+                    isSelected={isSelected}
+                    handleMouseMoveAway={handleMouseMoveAway}
                   />
                 );
               })}
