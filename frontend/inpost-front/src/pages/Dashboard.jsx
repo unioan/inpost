@@ -12,9 +12,9 @@ import { logout } from '../services/api';
 import { LuLoader } from 'react-icons/lu';
 
 function Dashboard() {
-  const { login, removeFromStorage } = useAuth();
+  const { login, userId, removeFromStorage } = useAuth();
   const navigate = useNavigate();
-  const userId = '681f25f604b58c8834e2a794';
+  //const userId = '681f25f604b58c8834e2a794';
   const [messages, isMessagesLoading, refetchMessages, removeMessage] =
     useFetchMessages();
   const [

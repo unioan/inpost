@@ -3,7 +3,7 @@ import FormTextInput from '../components/FormTextInput';
 import FormAuth from '../components/FormAuth';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../components/hoc/AuthProvider';
-import { loginUser } from '../services/api';
+import { loginUser, signup } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 
 function Auth() {
@@ -46,11 +46,17 @@ function Auth() {
         setAuthError(message);
       }
     } else if (formType === 'signup') {
-      console.log(
-        'DEBUG type SIGNUP: ',
-        `data.signupLogin: ${data.signupLogin.trim()}`,
-        `data.signupPassword: ${data.signupPassword.trim()}`
-      );
+      try {
+        const { signupLogin: login, signupPassword: password } = data;
+        const { user } = await signup({ login, password });
+        saveToStorage('userId', user._id);
+        saveToStorage('login', login);
+        await loginUser({ login, password });
+        navigate('/dashboard');
+      } catch (error) {
+        const { message } = error.response.data;
+        setAuthError(message);
+      }
     }
   };
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { loginUser } from "../services/api";
+import { loginUser, signup } from "../services/api";
 
 export const useFetchUser = () => {
  const [userId, setUserId] = useState({})
@@ -10,5 +10,11 @@ export const useFetchUser = () => {
   return id
  }
 
- return [userId, login]
+ const createNewUser = async (login, password) => {
+  const { userId: id } = await signup({ login, password });
+  setUserId(id)
+  return id
+ }
+
+ return [userId, login, signup]
 }
