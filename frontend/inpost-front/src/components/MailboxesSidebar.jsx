@@ -33,7 +33,7 @@ function MailboxesSidebar({
     <div className='table-fixed w-105 h-screen overflow-y-auto'>
       <SelectedMailboxCell
         isMailboxesLoading={isMailboxesLoading}
-        currentMailbox={currentMailbox}
+        currentMailbox={currentMailbox || ''}
         handleCopy={handleCopy}
         isCopySelected={isCopySelected}
         handleMouseMoveAway={handleMouseMoveAway}

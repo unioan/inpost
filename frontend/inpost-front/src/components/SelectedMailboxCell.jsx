@@ -25,7 +25,7 @@ function SelectedMailboxCell({
             onMouseLeave={handleMouseMoveAway}
           >
             <p className='hover:bg-slate-50/75 ml-2 truncate whitespace-nowrap overflow-hidden flex items-center px-2 rounded-lg cursor-pointer gap-1'>
-              {currentMailbox.mailboxAddress}
+              {currentMailbox.mailboxAddress || 'No mailboxes created'}
               {isCopySelected ? (
                 <FaClipboardCheck className='inline opacity-0 group-hover:opacity-100 transition-opacity duration-200' />
               ) : (
@@ -33,7 +33,7 @@ function SelectedMailboxCell({
               )}
             </p>
           </div>
-          <p className='ml-4 text-[10px]'>
+          <p className={`ml-4 text-[10px] ${currentMailbox || 'hidden'}`}>
             <span>inactive</span> since {formatTime(currentMailbox.expiresAt)}
           </p>
         </div>

@@ -35,7 +35,7 @@ function Dashboard() {
     (async () => {
       const { activeMailboxes, inactiveMailboxes } = await getMailboxes();
       const autoselectedMailbox = activeMailboxes[0] || inactiveMailboxes[0];
-      selectMailbox(autoselectedMailbox);
+      autoselectedMailbox || selectMailbox(autoselectedMailbox);
       if (!isMounted.current) {
         isMounted.current = true;
         await refetchMessages(autoselectedMailbox?._id);
