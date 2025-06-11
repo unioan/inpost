@@ -34,10 +34,6 @@ function MailboxCell({
                   handleCopy(e, mailbox.mailboxAddress);
                 }}
                 onMouseLeave={handleMouseMoveAway}
-                // onClick={(e) => {
-                //   e.stopPropagation();
-                //   console.log('DEBUG mailname CLICKED');
-                // }}
               >
                 <span>{mailbox.mailboxAddress}</span>
                 {isCopySelected ? (

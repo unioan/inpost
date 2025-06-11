@@ -34,12 +34,18 @@ function MailboxesSidebar({
       <SelectedMailboxCell
         isMailboxesLoading={isMailboxesLoading}
         currentMailbox={currentMailbox}
+        handleCopy={handleCopy}
+        isCopySelected={isCopySelected}
+        handleMouseMoveAway={handleMouseMoveAway}
       />
 
       <MailboxTableHeader
         type='active'
         isMailboxesLoading={isMailboxesLoading}
         mailboxes={activeMailboxes}
+        handleCopy={handleCopy}
+        handleMouseMoveAway={handleMouseMoveAway}
+        isCopySelected={isCopySelected}
       />
       <table className='ml-4 table-fixed w-full'>
         <tbody>
