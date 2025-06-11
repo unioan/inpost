@@ -11,13 +11,13 @@ function MailboxesSidebar({
   handleMailboxSelection,
   isMailboxesLoading,
 }) {
-  const [isSelected, setIsSelected] = useState(false);
+  const [isCopySelected, setIsCopySelected] = useState(false);
 
   const handleCopy = async (e, mailbox) => {
     e.stopPropagation();
-    console.log(mailbox)
+    console.log(currentMailbox);
     await navigator.clipboard.writeText(mailbox);
-    setIsSelected(true);
+    setIsCopySelected(true);
     console.log(
       'DEBUG mailname CLICKED, NEw location - MailboxesSidebar',
       `\nmailboxis is,`,
@@ -26,7 +26,7 @@ function MailboxesSidebar({
   };
 
   const handleMouseMoveAway = (e) => {
-    setIsSelected(false);
+    setIsCopySelected(false);
   };
 
   return (
@@ -61,6 +61,9 @@ function MailboxesSidebar({
                     isMailboxesLoading={isMailboxesLoading}
                     handleMailboxSelection={handleMailboxSelection}
                     handleCopy={handleCopy}
+                    isCopySelected={isCopySelected}
+                    isSelected={mailbox._id === currentMailbox._id}
+                    handleMouseMoveAway={handleMouseMoveAway}
                   />
                 );
               })}
@@ -92,7 +95,8 @@ function MailboxesSidebar({
                     isMailboxesLoading={isMailboxesLoading}
                     handleMailboxSelection={handleMailboxSelection}
                     handleCopy={handleCopy}
-                    isSelected={isSelected}
+                    isCopySelected={isCopySelected}
+                    isSelected={mailbox._id === currentMailbox._id}
                     handleMouseMoveAway={handleMouseMoveAway}
                   />
                 );

@@ -8,11 +8,12 @@ function MailboxCell({
   handleMailboxSelection,
   handleCopy,
   handleMouseMoveAway,
+  isCopySelected,
   isSelected,
 }) {
   return (
     <>
-      <tr className='text-sm cursor-pointer'>
+      <tr className='text-sm cursor-pointer relative'>
         {isMailboxesLoading ? (
           <td className='h-16'>
             <div className='flex-1 flex flex-col justify-center animate-pulse'>
@@ -28,8 +29,10 @@ function MailboxCell({
           >
             <div className='font-light flex pt-1'>
               <div
-                className={`flex items-center gap-1 group hover:bg-slate-50 p-1 rounded-lg`}
-                onClick={(e) => {handleCopy(e, mailbox.mailboxAddress);}}
+                className={`flex items-center gap-1 group hover:bg-slate-50 py-1 px-2 rounded-lg`}
+                onClick={(e) => {
+                  handleCopy(e, mailbox.mailboxAddress);
+                }}
                 onMouseLeave={handleMouseMoveAway}
                 // onClick={(e) => {
                 //   e.stopPropagation();
@@ -37,7 +40,7 @@ function MailboxCell({
                 // }}
               >
                 <span>{mailbox.mailboxAddress}</span>
-                {isSelected ? (
+                {isCopySelected ? (
                   <FaClipboardCheck className='inline opacity-0 group-hover:opacity-100 transition-opacity duration-200' />
                 ) : (
                   <FaRegClipboard className='inline opacity-0 group-hover:opacity-100 transition-opacity duration-200' />
@@ -45,7 +48,7 @@ function MailboxCell({
               </div>
               <div className='flex-1 shrink-0'></div>
             </div>
-            <div className='mb-2 pl-1'>
+            <div className='mb-2 pl-2'>
               <span className='text-xs font-light'>
                 {type == 'active' ? 'until ' : 'expired '}
               </span>
@@ -53,6 +56,9 @@ function MailboxCell({
                 {formatTime(mailbox.expiresAt)}
               </span>
             </div>
+            {isSelected && (
+              <div className='border-l-[2px] h-11 absolute top-[8px] left-[0px] border-[#C2E812]'></div>
+            )}
           </td>
         )}
       </tr>

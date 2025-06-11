@@ -44,7 +44,6 @@ function Dashboard() {
   }, []);
 
   const handleMailboxSelection = async (mailbox) => {
-    console.log(mailbox);
     selectMailbox(mailbox);
     await refetchMessages(mailbox._id);
   };
