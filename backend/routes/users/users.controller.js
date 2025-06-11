@@ -1,11 +1,13 @@
 const passport = require('passport');
 const { createDBUser } = require('../../models/users.model')
+const { createMailListIfNotExist } = require('../../models/mailboxList.model')
 const AppError = require('../../error/AppError');
 const UNAUTHENTICATED_ERROR = new AppError('auth', 401, 'You are not authorized')
 
 async function createUser(req, res) {
   try {
     const user = await createDBUser(req.body)
+    await createMailListIfNotExist(user.id)
     res.status(201).json({ message: 'User created', user });
   } catch (error) {
     switch (error.code) {
