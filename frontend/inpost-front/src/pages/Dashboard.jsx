@@ -14,7 +14,6 @@ import { LuLoader } from 'react-icons/lu';
 function Dashboard() {
   const { login, userId, removeFromStorage } = useAuth();
   const navigate = useNavigate();
-  //const userId = '681f25f604b58c8834e2a794';
   const [messages, isMessagesLoading, refetchMessages, removeMessage] =
     useFetchMessages();
   const [
@@ -30,13 +29,12 @@ function Dashboard() {
 
   // без этого при нажатии кнопки обновить страницу, список сообщений рендерится два раза
   const isMounted = useRef(false);
-
   useEffect(() => {
     (async () => {
       const { activeMailboxes, inactiveMailboxes } = await getMailboxes();
       const autoselectedMailbox = activeMailboxes[0] || inactiveMailboxes[0];
       autoselectedMailbox || selectMailbox(autoselectedMailbox);
-      if (!isMounted.current) {
+      if (!isMounted.current && autoselectedMailbox) {
         isMounted.current = true;
         await refetchMessages(autoselectedMailbox?._id);
       }
