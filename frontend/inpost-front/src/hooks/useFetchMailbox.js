@@ -1,7 +1,7 @@
 import { fetchMailboxes, createNewMailbox } from "../services/api"
 import { useState } from "react"
 
-export const useFetchMailboxes = (userId) => {
+export const useFetchMailboxes = () => {
  const [currentMailbox, setCurrentMailbox] = useState({})
  const [inactiveMailboxes, setInactiveMailboxes] = useState([])
  const [activeMailboxes, setActiveMailboxes] = useState([])
@@ -9,16 +9,15 @@ export const useFetchMailboxes = (userId) => {
 
  const getMailboxes = async () => {
   setMailboxesLoading(true)
-  const data = await fetchMailboxes(userId)
+  const data = await fetchMailboxes()
   setMailboxesLoading(false)
   setActiveMailboxes(data.activeMailboxes)
   setInactiveMailboxes(data.inactiveMailboxes)
   return { activeMailboxes: data.activeMailboxes, inactiveMailboxes: data.inactiveMailboxes }
  }
 
- const createMailbox = async (userId, login) => {
-  const { mailbox } = await createNewMailbox(userId, login);
-  console.log('DEBUG inside useFetchMailboxes:', mailbox)
+ const createMailbox = async () => {
+  const { mailbox } = await createNewMailbox();
   setActiveMailboxes((prev) => ([
    mailbox, ...prev])
   )

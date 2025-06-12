@@ -1,18 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { useFetchMessages } from '../hooks/useFetchMessages';
 import { useFetchMailboxes } from '../hooks/useFetchMailbox';
-import { useParams } from 'react-router-dom';
 import Newtable from '../components/Newtable';
 import MailboxesSidebar from '../components/MailboxesSidebar';
 import { ImExit } from 'react-icons/im';
 import { FaCirclePlus } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../components/hoc/AuthProvider';
 import { logout } from '../services/api';
 import { LuLoader } from 'react-icons/lu';
 
 function Dashboard() {
-  const { login, userId, removeFromStorage } = useAuth();
   const navigate = useNavigate();
   const [messages, isMessagesLoading, refetchMessages, removeMessage] =
     useFetchMessages();
@@ -24,7 +21,7 @@ function Dashboard() {
     getMailboxes,
     selectMailbox,
     createMailbox,
-  ] = useFetchMailboxes(userId);
+  ] = useFetchMailboxes();
   const [isCreatingMailbox, setCreatingMailbox] = useState(false);
 
   // без этого при нажатии кнопки обновить страницу, список сообщений рендерится два раза
@@ -49,10 +46,8 @@ function Dashboard() {
 
   const handleMailboxCreation = async () => {
     setCreatingMailbox(true);
-    console.log('DEBUG BEFORE isCreatingMailbox:', isCreatingMailbox);
-    const mailbox = await createMailbox(userId, login);
+    const mailbox = await createMailbox();
     setCreatingMailbox(false);
-    console.log('DEBUG AFTER isCreatingMailbox:', isCreatingMailbox);
     selectMailbox(mailbox);
     await refetchMessages(mailbox._id);
   };
@@ -60,10 +55,7 @@ function Dashboard() {
   const handleLogout = async () => {
     try {
       logout();
-      removeFromStorage('userId');
-      removeFromStorage('login');
       navigate('/auth');
-      console.log('DEBUG :', 'logout happened');
     } catch (error) {
       console.log('DEBUG Dashboard:', 'handleLogout error', error);
     }
