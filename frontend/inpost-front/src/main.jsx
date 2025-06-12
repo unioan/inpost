@@ -6,7 +6,6 @@ import Dashboard from './pages/Dashboard.jsx';
 import './index.css';
 import Auth from './pages/Auth.jsx';
 import { RequireAuth } from './components/hoc/RequireAuth.jsx';
-import { AuthProvider } from './components/hoc/AuthProvider.jsx';
 
 // Dashboard не работает пока из-за того что ему нужен mailboxId
 const router = createBrowserRouter([
@@ -24,8 +23,6 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <RouterProvider router={router} />
   </StrictMode>
 );

@@ -2,16 +2,12 @@ import { useState } from 'react';
 import FormTextInput from '../components/FormTextInput';
 import FormAuth from '../components/FormAuth';
 import { useForm } from 'react-hook-form';
-import { useAuth } from '../components/hoc/AuthProvider';
 import { loginUser, signup } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 
 function Auth() {
   const navigate = useNavigate();
-
-  const { userId, login, saveToStorage, removeFromStorage } = useAuth();
   const [authError, setAuthError] = useState('');
-
   const [formType, setFormType] = useState('login');
   const {
     register,
@@ -37,9 +33,7 @@ function Auth() {
     if (formType === 'login') {
       const { login, password } = data;
       try {
-        const { userId: backendUserId } = await loginUser({ login, password });
-        saveToStorage('userId', backendUserId);
-        saveToStorage('login', login);
+        await loginUser({ login, password });
         navigate('/dashboard');
       } catch (error) {
         const { message } = error.response.data;
@@ -48,9 +42,7 @@ function Auth() {
     } else if (formType === 'signup') {
       try {
         const { signupLogin: login, signupPassword: password } = data;
-        const { user } = await signup({ login, password });
-        saveToStorage('userId', user._id);
-        saveToStorage('login', login);
+        await signup({ login, password });
         await loginUser({ login, password });
         navigate('/dashboard');
       } catch (error) {
