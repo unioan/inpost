@@ -20,7 +20,7 @@ const UNAUTHENTICATED_ERROR = new AppError('auth', 401, 'You are not authorized'
 
 async function createMailbox(req, res) {
  if (!req.isAuthenticated()) throw UNAUTHENTICATED_ERROR
- const { login, userId } = req.body
+ const { id: userId, login } = req.user
 
  // создать пользователя в MailboxList
  await createMailListIfNotExist(userId)
@@ -59,7 +59,7 @@ async function createMailbox(req, res) {
 
 async function getMailboxes(req, res) {
  if (!req.isAuthenticated()) throw UNAUTHENTICATED_ERROR
- const { userId } = req.params
+ const { id: userId } = req.user
  await getMailboxesListUpdated(userId)
  const mailboxList = await getMailboxesListSorted(userId)
  res.status(200).json(mailboxList)

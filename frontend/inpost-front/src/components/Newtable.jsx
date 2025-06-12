@@ -78,6 +78,7 @@ function Newtable({ messages, isMessagesLoading, removeMessage, mailboxId }) {
       id: 'actions',
       cell: ({ row, table }) => {
         const handleToggleExpand = () => {
+          console.log('DEBUG mailboxId: ', mailboxId);
           toggleExpandMessage(row.id, mailboxId);
         };
 
