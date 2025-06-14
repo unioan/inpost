@@ -31,12 +31,12 @@ export const useExpandMessage = () => {
    if (!messagesContent[rowId]) {
     // включить загрузку
     setLoadingList((prev) => ({ ...prev, [rowId]: true }));
-    const { text } = await fetchMessage(mailboxId, rowId);
+    const { text, ...rest } = await fetchMessage(mailboxId, rowId);
     console.log('DEBUG HOOK: ', text);
     // сохранить message
     setMessagesContent((prev) => ({
      ...prev,
-     [rowId]: { content: text },
+     [rowId]: { content: text, rest },
     }));
     // убрать из загрузки
     setLoadingList((prev) => {

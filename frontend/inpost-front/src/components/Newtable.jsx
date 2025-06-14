@@ -61,7 +61,11 @@ function Newtable({ messages, isMessagesLoading, removeMessage, mailboxId }) {
       header: 'Email',
       cell: (props) => {
         const content = props.getValue();
-        return <p>{content}</p>;
+        return (
+          <p className='whitespace-nowrap overflow-hidden text-ellipsis mr-3'>
+            {content}
+          </p>
+        );
       },
       size: 150,
     },
@@ -70,7 +74,7 @@ function Newtable({ messages, isMessagesLoading, removeMessage, mailboxId }) {
       header: 'Title',
       cell: (props) => {
         const content = props.getValue();
-        return <p>{content}</p>;
+        return <p className=''>{content}</p>;
       },
       size: 450,
     },
@@ -178,67 +182,66 @@ function Newtable({ messages, isMessagesLoading, removeMessage, mailboxId }) {
   });
 
   return (
-    
-      <table className='w-full table-fixed'>
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <th
-                  key={header.id}
-                  className='text-left'
-                  style={{
-                    width: header.getSize(),
-                  }}
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
+    <table className='w-full table-fixed'>
+      <thead>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <tr key={headerGroup.id}>
+            {headerGroup.headers.map((header) => (
+              <th
+                key={header.id}
+                className='text-left'
+                style={{
+                  width: header.getSize(),
+                }}
+              >
+                {header.isPlaceholder
+                  ? null
+                  : flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+              </th>
+            ))}
+          </tr>
+        ))}
+      </thead>
+      <tbody>
+        {isMessagesLoading
+          ? Array.from({ length: 8 }).map((_, index) => (
+              <MailSkeletonRow key={index} />
+            ))
+          : table.getRowModel().rows.map((row) => (
+              <React.Fragment key={row.id}>
+                <tr className='border-b-[0.1px] border-black'>
+                  {row.getVisibleCells().map((cell) => (
+                    <td
+                      key={cell.id}
+                      style={{
+                        maxWidth: cell.column.getSize(),
+                      }}
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
                       )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {isMessagesLoading
-            ? Array.from({ length: 8 }).map((_, index) => (
-                <MailSkeletonRow key={index} />
-              ))
-            : table.getRowModel().rows.map((row) => (
-                <React.Fragment key={row.id}>
-                  <tr className='border-b-[0.1px] border-black'>
-                    {row.getVisibleCells().map((cell) => (
-                      <td
-                        key={cell.id}
-                        style={{
-                          maxWidth: cell.column.getSize(),
-                        }}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </td>
-                    ))}
+                    </td>
+                  ))}
+                </tr>
+                {/* Вот здесь дисплеить */}
+                {row.getIsExpanded() && messageList[row.id]?.content && (
+                  <tr>
+                    <td colSpan={row.getVisibleCells().length}>
+                      <iframe
+                        className='py-4 px-12 bg-gray-100 w-full h-[600px]'
+                        srcDoc={messageList[row.id]?.rest.html[0]}
+                      />
+                    </td>
                   </tr>
-                  {/* Вот здесь дисплеить */}
-                  {row.getIsExpanded() && messageList[row.id]?.content && (
-                    <tr>
-                      <td colSpan={row.getVisibleCells().length}>
-                        <div className='py-4 px-12 bg-gray-100'>
-                          Expanded content for: {messageList[row.id]?.content}
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                </React.Fragment>
-              ))}
-        </tbody>
-      </table>
-    
+                )}
+              </React.Fragment>
+            ))}
+      </tbody>
+    </table>
   );
 }
 
