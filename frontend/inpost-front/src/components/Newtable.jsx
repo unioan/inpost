@@ -182,7 +182,7 @@ function Newtable({ messages, isMessagesLoading, removeMessage, mailboxId }) {
   });
 
   return (
-    <table className='w-full table-fixed'>
+    <table className='w-full table-fixed mb-5'>
       <thead>
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
