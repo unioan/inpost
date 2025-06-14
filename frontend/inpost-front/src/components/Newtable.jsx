@@ -67,7 +67,7 @@ function Newtable({ messages, isMessagesLoading, removeMessage, mailboxId }) {
           </p>
         );
       },
-      size: 150,
+      size: 190,
     },
     {
       accessorKey: 'subject',
@@ -76,7 +76,7 @@ function Newtable({ messages, isMessagesLoading, removeMessage, mailboxId }) {
         const content = props.getValue();
         return <p className=''>{content}</p>;
       },
-      size: 450,
+      size: 350,
     },
     {
       id: 'actions',
