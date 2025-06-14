@@ -74,7 +74,11 @@ function Newtable({ messages, isMessagesLoading, removeMessage, mailboxId }) {
       header: 'Title',
       cell: (props) => {
         const content = props.getValue();
-        return <p className=''>{content}</p>;
+        return (
+          <p className='whitespace-nowrap overflow-hidden text-ellipsis mr-3'>
+            {content}
+          </p>
+        );
       },
       size: 350,
     },
