@@ -19,8 +19,16 @@ import React from 'react';
 import IndeterminateCheckbox from './IndeterminateCheckbox';
 import { useExpandMessage } from '../hooks/useExpandMessage';
 import MailSkeletonRow from './MailSkeletonRow';
+import MailExpandedRow from './MailExpandedRow';
+import { patchMessageSeen } from '../services/api';
 
-function Newtable({ messages, isMessagesLoading, removeMessage, mailboxId }) {
+function Newtable({
+  messages,
+  isMessagesLoading,
+  removeMessage,
+  markMessageSeen,
+  mailboxId,
+}) {
   const [rowSelection, setRowSelection] = useState({});
   const [
     expanded,
@@ -180,10 +188,17 @@ function Newtable({ messages, isMessagesLoading, removeMessage, mailboxId }) {
           return updated;
         });
       },
+      seenRow: (rowId) => {
+        markMessageSeen(rowId);
+      },
     },
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
   });
+
+  const makeMessageSeen = (messageId) => {
+    patchMessageSeen(mailboxId, messageId);
+  };
 
   return (
     <table className='w-full table-fixed mb-5'>
@@ -233,14 +248,12 @@ function Newtable({ messages, isMessagesLoading, removeMessage, mailboxId }) {
                 </tr>
                 {/* Вот здесь дисплеить */}
                 {row.getIsExpanded() && messageList[row.id]?.content && (
-                  <tr>
-                    <td colSpan={row.getVisibleCells().length}>
-                      <iframe
-                        className='py-4 px-12 bg-gray-100 w-full h-[600px]'
-                        srcDoc={messageList[row.id]?.rest.html[0]}
-                      />
-                    </td>
-                  </tr>
+                  <MailExpandedRow
+                    row={row}
+                    messageList={messageList}
+                    table={table}
+                    makeMessageSeen={makeMessageSeen}
+                  />
                 )}
               </React.Fragment>
             ))}

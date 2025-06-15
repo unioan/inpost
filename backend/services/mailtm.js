@@ -62,10 +62,22 @@ async function getMessage(token, messageId) {
   return response.data;
 }
 
+async function patchMessageSeen(token, messageId) {
+  const response = await axios.patch(`${BASE_URL}/messages/${messageId}`, { seen: true }, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/merge-patch+json',
+      Accept: 'application/json'
+    },
+  });
+  return response.data;
+}
+
 module.exports = {
   getDomain,
   createAccount,
   getToken,
   getMessages,
-  getMessage
+  getMessage,
+  patchMessageSeen
 };

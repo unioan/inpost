@@ -20,5 +20,13 @@ export const useFetchMessages = () => {
   })
  }
 
- return [messages, isMessagesLoading, refetchMessages, removeMessage]
+ const markMessageSeen = (rowId) => {
+  setMessages((prev) =>
+   prev.map((row) =>
+    row.id === rowId ? { ...row, seen: true } : row
+   )
+  );
+ };
+
+ return [messages, isMessagesLoading, refetchMessages, removeMessage, markMessageSeen]
 }

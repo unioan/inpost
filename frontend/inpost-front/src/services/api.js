@@ -45,4 +45,9 @@ export async function fetchMessage(mailboxId, messageId) {
  return res.data;
 }
 
+export async function patchMessageSeen(mailboxId, messageId) {
+ const res = await api.patch(`/messages/${mailboxId}/${messageId}`);
+ return res.data;
+}
+
 export default api;

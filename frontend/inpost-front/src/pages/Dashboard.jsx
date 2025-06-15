@@ -11,8 +11,13 @@ import { LuLoader } from 'react-icons/lu';
 
 function Dashboard() {
   const navigate = useNavigate();
-  const [messages, isMessagesLoading, refetchMessages, removeMessage] =
-    useFetchMessages();
+  const [
+    messages,
+    isMessagesLoading,
+    refetchMessages,
+    removeMessage,
+    markMessageSeen,
+  ] = useFetchMessages();
   const [
     currentMailbox,
     inactiveMailboxes,
@@ -106,6 +111,7 @@ function Dashboard() {
           messages={messages}
           isMessagesLoading={isMessagesLoading}
           removeMessage={removeMessage}
+          markMessageSeen={markMessageSeen}
           mailboxId={currentMailbox?._id}
         />
       </div>
