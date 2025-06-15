@@ -30,6 +30,7 @@ function Newtable({
   mailboxId,
 }) {
   const [rowSelection, setRowSelection] = useState({});
+  const [rowAttachmentShown, setRowAttachmentShown] = useState('');
   const [
     expanded,
     messageList,
@@ -135,10 +136,19 @@ function Newtable({
                       ? 'visible'
                       : 'hidden',
                   }}
+                  onClick={() => {
+                    handleAttachmentButtonClicked(row);
+                  }}
                 />
-                <span className='absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap'>
-                  Has attachments
-                </span>
+                {row.original.hasAttachments && (
+                  <span className='absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap'>
+                    Has attachments
+                  </span>
+                )}
+                {rowAttachmentShown && rowAttachmentShown === row.id && (
+                  // <div className='h-[100px] w-[300px] absolute right-5 rounded-sm bg-white/80 rounded-2xl shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-2xl border border-white/30'></div>
+                  <div className='h-[100px] w-[300px] absolute right-5 rounded-sm bg-white/85 rounded-2xl shadow-[0_2px_9px_rgba(0,0,0,0.25)] backdrop-blur-md border border-white/30'></div>
+                )}
               </div>
               <VscCircleLargeFilled
                 className='text-lg'
@@ -199,6 +209,14 @@ function Newtable({
 
   const makeMessageSeen = (messageId) => {
     patchMessageSeen(mailboxId, messageId);
+  };
+
+  const handleAttachmentButtonClicked = (row) => {
+    // origin сама модель сообщения
+    setRowAttachmentShown((prev) => {
+      return prev === row.id ? '' : row.id;
+    });
+    console.log('DEBUG handleAttachmentButtonClicked', row, rowAttachmentShown);
   };
 
   return (
