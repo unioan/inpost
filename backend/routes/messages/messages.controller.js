@@ -1,7 +1,8 @@
 const {
  getMessages,
  getMessage,
- patchMessageSeen
+ patchMessageSeen,
+ removeMessage
 } = require('../../services/mailtm')
 const { getMailboxTokenDB } = require('../../models/boxes.model')
 const AppError = require('../../error/AppError');
@@ -28,14 +29,21 @@ async function makeMessageSeen(req, res) {
  if (!req.isAuthenticated()) throw UNAUTHENTICATED_ERROR
  const { mailboxId, messageId } = req.params
  const token = await getMailboxTokenDB(mailboxId)
- console.log('DEBUG makeMessageSeen token:', token)
  const message = await patchMessageSeen(token, messageId)
- console.log('DEBUG makeMessageSeen message:', message)
+ res.status(200).json({ ...message })
+}
+
+async function deleteMessage(req, res) {
+ if (!req.isAuthenticated()) throw UNAUTHENTICATED_ERROR
+ const { mailboxId, messageId } = req.params
+ const token = await getMailboxTokenDB(mailboxId)
+ const message = await removeMessage(token, messageId)
  res.status(200).json({ ...message })
 }
 
 module.exports = {
  getMessagesList,
  getMessageContent,
- makeMessageSeen
+ makeMessageSeen,
+ deleteMessage
 }

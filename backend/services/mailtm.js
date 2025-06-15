@@ -73,11 +73,21 @@ async function patchMessageSeen(token, messageId) {
   return response.data;
 }
 
+async function removeMessage(token, messageId) {
+  const response = await axios.delete(`${BASE_URL}/messages/${messageId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+  });
+  return response.data;
+}
+
 module.exports = {
   getDomain,
   createAccount,
   getToken,
   getMessages,
   getMessage,
-  patchMessageSeen
+  patchMessageSeen,
+  removeMessage
 };

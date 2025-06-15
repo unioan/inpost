@@ -20,7 +20,7 @@ import IndeterminateCheckbox from './IndeterminateCheckbox';
 import { useExpandMessage } from '../hooks/useExpandMessage';
 import MailSkeletonRow from './MailSkeletonRow';
 import MailExpandedRow from './MailExpandedRow';
-import { patchMessageSeen } from '../services/api';
+import { patchMessageSeen, deleteMessage } from '../services/api';
 
 function Newtable({
   messages,
@@ -182,6 +182,7 @@ function Newtable({
     meta: {
       removeRow: (rowId) => {
         removeMessage(rowId);
+        deleteMessage(mailboxId, rowId);
         setRowSelection((prev) => {
           const updated = { ...prev };
           delete updated[rowId];

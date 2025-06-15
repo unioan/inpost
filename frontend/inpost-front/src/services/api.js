@@ -50,4 +50,10 @@ export async function patchMessageSeen(mailboxId, messageId) {
  return res.data;
 }
 
+export async function deleteMessage(mailboxId, messageId) {
+ console.log('DEBUG deleteMessage API call', mailboxId, messageId)
+ const res = await api.delete(`/messages/${mailboxId}/${messageId}`);
+ return res.data;
+}
+
 export default api;
