@@ -146,7 +146,6 @@ function Newtable({
                   </span>
                 )}
                 {rowAttachmentShown && rowAttachmentShown === row.id && (
-                  // <div className='h-[100px] w-[300px] absolute right-5 rounded-sm bg-white/80 rounded-2xl shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-2xl border border-white/30'></div>
                   <div className='h-[100px] w-[300px] absolute right-5 rounded-sm bg-white/85 rounded-2xl shadow-[0_2px_9px_rgba(0,0,0,0.25)] backdrop-blur-md border border-white/30'></div>
                 )}
               </div>
