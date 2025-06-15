@@ -82,6 +82,16 @@ async function removeMessage(token, messageId) {
   return response.data;
 }
 
+async function downloadItem(token, messageId, attachmentName) {
+  const response = await axios.get(`${BASE_URL}/messages/${messageId}/attachment/${attachmentName}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    responseType: 'stream'
+  });
+  return response
+}
+
 module.exports = {
   getDomain,
   createAccount,
@@ -89,5 +99,6 @@ module.exports = {
   getMessages,
   getMessage,
   patchMessageSeen,
-  removeMessage
+  removeMessage,
+  downloadItem
 };

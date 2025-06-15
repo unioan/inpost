@@ -2,7 +2,8 @@ const {
  getMessages,
  getMessage,
  patchMessageSeen,
- removeMessage
+ removeMessage,
+ downloadItem
 } = require('../../services/mailtm')
 const { getMailboxTokenDB } = require('../../models/boxes.model')
 const AppError = require('../../error/AppError');
@@ -41,9 +42,27 @@ async function deleteMessage(req, res) {
  res.status(200).json({ ...message })
 }
 
+async function getMessageAttachments(req, res) {
+ if (!req.isAuthenticated()) throw UNAUTHENTICATED_ERROR
+ const { mailboxId, messageId } = req.params
+ const token = await getMailboxTokenDB(mailboxId)
+ const message = await getMessage(token, messageId)
+ res.status(200).json({ attachments: message.attachments })
+}
+
+async function downloadAttachment(req, res) {
+ if (!req.isAuthenticated()) throw UNAUTHENTICATED_ERROR
+ const { mailboxId, messageId, attachmentName } = req.params
+ const token = await getMailboxTokenDB(mailboxId)
+ const response = await downloadItem(token, messageId, attachmentName)
+ response.data.pipe(res)
+}
+
 module.exports = {
  getMessagesList,
  getMessageContent,
  makeMessageSeen,
- deleteMessage
+ deleteMessage,
+ getMessageAttachments,
+ downloadAttachment
 }
