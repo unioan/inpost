@@ -56,4 +56,9 @@ export async function deleteMessage(mailboxId, messageId) {
  return res.data;
 }
 
+export async function getAttachmentsList(mailboxId, messageId) {
+ const res = await api.get(`/messages/attachments/${mailboxId}/${messageId}`);
+ return res.data;
+}
+
 export default api;

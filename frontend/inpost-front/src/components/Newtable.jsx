@@ -12,6 +12,7 @@ import {
   LuPaperclip,
   LuLoader,
   LuChevronUp,
+  LuFileDown,
 } from 'react-icons/lu';
 import { VscCircleLargeFilled } from 'react-icons/vsc';
 import { RiDeleteBin7Fill } from 'react-icons/ri';
@@ -20,7 +21,11 @@ import IndeterminateCheckbox from './IndeterminateCheckbox';
 import { useExpandMessage } from '../hooks/useExpandMessage';
 import MailSkeletonRow from './MailSkeletonRow';
 import MailExpandedRow from './MailExpandedRow';
-import { patchMessageSeen, deleteMessage } from '../services/api';
+import {
+  patchMessageSeen,
+  deleteMessage,
+  getAttachmentsList,
+} from '../services/api';
 
 function Newtable({
   messages,
@@ -31,6 +36,14 @@ function Newtable({
 }) {
   const [rowSelection, setRowSelection] = useState({});
   const [rowAttachmentShown, setRowAttachmentShown] = useState('');
+  const [attachmentsStore, setAttachmentsStore] = useState({});
+  const [isAttachmentsLoading, setAttachmentsLoading] = useState(false);
+  const isLoadingAttachmentSpinner = (row) => {
+    return rowAttachmentShown === row.id && !attachmentsStore[row.id];
+  };
+  const isAttachmentViewShown = (row) => {
+    return rowAttachmentShown === row.id && attachmentsStore[row.id];
+  };
   const [
     expanded,
     messageList,
@@ -129,24 +142,42 @@ function Newtable({
             </div>
             <div className='flex flex-row-reverse gap-3'>
               <div className='relative group'>
-                <LuPaperclip
-                  className='text-lg'
-                  style={{
-                    visibility: row.original.hasAttachments
-                      ? 'visible'
-                      : 'hidden',
-                  }}
-                  onClick={() => {
-                    handleAttachmentButtonClicked(row);
-                  }}
-                />
+                {isLoadingAttachmentSpinner(row) ? (
+                  <LuLoader className='text-lg animate-spin' />
+                ) : (
+                  <LuPaperclip
+                    className='text-lg'
+                    style={{
+                      visibility: row.original.hasAttachments
+                        ? 'visible'
+                        : 'hidden',
+                    }}
+                    onClick={() => {
+                      handleAttachmentButtonClicked(row);
+                    }}
+                  />
+                )}
                 {row.original.hasAttachments && (
                   <span className='absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap'>
                     Has attachments
                   </span>
                 )}
-                {rowAttachmentShown && rowAttachmentShown === row.id && (
-                  <div className='h-[100px] w-[300px] absolute right-5 rounded-sm bg-white/85 rounded-2xl shadow-[0_2px_9px_rgba(0,0,0,0.25)] backdrop-blur-md border border-white/30'></div>
+                {isAttachmentViewShown(row) && (
+                  <div className='min-w-[300px] p-2 flex flex-col gap-1 absolute right-5 rounded-sm bg-white/85 rounded-2xl shadow-[0_2px_9px_rgba(0,0,0,0.25)] backdrop-blur-md border border-white/30'>
+                    {attachmentsStore[row.id]?.map((attachment) => {
+                      return (
+                        <div
+                          className='flex items-center gap-1'
+                          key={attachment.id}
+                        >
+                          <LuFileDown className='shrink-0' />
+                          <div className='whitespace-nowrap overflow-hidden text-ellipsis max-w-[300px]'>
+                            {attachment.filename}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 )}
               </div>
               <VscCircleLargeFilled
@@ -210,12 +241,20 @@ function Newtable({
     patchMessageSeen(mailboxId, messageId);
   };
 
-  const handleAttachmentButtonClicked = (row) => {
-    // origin сама модель сообщения
+  const handleAttachmentButtonClicked = async (row) => {
     setRowAttachmentShown((prev) => {
       return prev === row.id ? '' : row.id;
     });
-    console.log('DEBUG handleAttachmentButtonClicked', row, rowAttachmentShown);
+
+    if (!attachmentsStore[row.id]) {
+      setAttachmentsLoading(true);
+      const { attachments } = await getAttachmentsList(mailboxId, row.id);
+      setAttachmentsStore((prev) => ({
+        ...prev,
+        [row.id]: attachments,
+      }));
+      setAttachmentsLoading(false);
+    }
   };
 
   return (
