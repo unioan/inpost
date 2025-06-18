@@ -39,6 +39,7 @@ function Newtable({
   const [rowAttachmentShown, setRowAttachmentShown] = useState('');
   const [attachmentsStore, setAttachmentsStore] = useState({});
   const [isAttachmentsLoading, setAttachmentsLoading] = useState(false);
+  const [waitAttachmentDownload, setWaitAttachmentDownload] = useState({});
   const isLoadingAttachmentSpinner = (row) => {
     return rowAttachmentShown === row.id && !attachmentsStore[row.id];
   };
@@ -174,7 +175,11 @@ function Newtable({
                             handleAttachmentDownload(row, attachment)
                           }
                         >
-                          <LuFileDown className='shrink-0' />
+                          {waitAttachmentDownload.id === attachment.id ? (
+                            <LuLoader className='text-lg animate-spin' />
+                          ) : (
+                            <LuFileDown className='shrink-0' />
+                          )}
                           <div className='whitespace-nowrap overflow-hidden text-ellipsis max-w-[300px]'>
                             {attachment.filename}
                           </div>
@@ -269,7 +274,7 @@ function Newtable({
   };
 
   const handleAttachmentDownload = async (row, attachment) => {
-    console.log('DEBUG attachment', attachment, row.original);
+    setWaitAttachmentDownload(attachment);
     try {
       const response = await getAttachment(
         mailboxId,
@@ -288,6 +293,7 @@ function Newtable({
       a.click();
       a.remove();
       window.URL.revokeObjectURL(url);
+      setWaitAttachmentDownload({});
     } catch (err) {
       console.error('Error downloading attachment:', err);
     }
