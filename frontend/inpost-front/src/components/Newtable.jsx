@@ -164,7 +164,7 @@ function Newtable({
                   </span>
                 )}
                 {isAttachmentViewShown(row) && (
-                  <div className='min-w-[300px] p-2 flex flex-col gap-1 absolute right-5 rounded-sm bg-white/85 rounded-2xl shadow-[0_2px_9px_rgba(0,0,0,0.25)] backdrop-blur-md border border-white/30'>
+                  <div className='min-w-[300px] p-2 flex flex-col gap-1 absolute right-5 rounded-sm bg-white/85 rounded-2xl shadow-[0_2px_9px_rgba(0,0,0,0.25)] backdrop-blur-md border border-white/30 z-10'>
                     {attachmentsStore[row.id]?.map((attachment) => {
                       return (
                         <div
