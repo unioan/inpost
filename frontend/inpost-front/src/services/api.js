@@ -61,4 +61,11 @@ export async function getAttachmentsList(mailboxId, messageId) {
  return res.data;
 }
 
+export async function getAttachment(mailboxId, messageId, attachmentId) {
+ const response = await api.get(`/messages/attachments/${mailboxId}/${messageId}/${attachmentId}`, {
+  responseType: 'blob', 
+ });
+ return response;
+}
+
 export default api;

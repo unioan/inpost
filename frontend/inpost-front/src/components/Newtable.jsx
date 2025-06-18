@@ -25,6 +25,7 @@ import {
   patchMessageSeen,
   deleteMessage,
   getAttachmentsList,
+  getAttachment,
 } from '../services/api';
 
 function Newtable({
@@ -157,7 +158,7 @@ function Newtable({
                     }}
                   />
                 )}
-                {row.original.hasAttachments && (
+                {row.original.hasAttachments && !rowAttachmentShown && (
                   <span className='absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap'>
                     Has attachments
                   </span>
@@ -167,8 +168,11 @@ function Newtable({
                     {attachmentsStore[row.id]?.map((attachment) => {
                       return (
                         <div
-                          className='flex items-center gap-1'
+                          className={`flex items-center gap-1 cursor-pointer hover:text-[#8BAC00] transition-colors`}
                           key={attachment.id}
+                          onClick={() =>
+                            handleAttachmentDownload(row, attachment)
+                          }
                         >
                           <LuFileDown className='shrink-0' />
                           <div className='whitespace-nowrap overflow-hidden text-ellipsis max-w-[300px]'>
@@ -254,6 +258,31 @@ function Newtable({
         [row.id]: attachments,
       }));
       setAttachmentsLoading(false);
+    }
+  };
+
+  const handleAttachmentDownload = async (row, attachment) => {
+    console.log('DEBUG attachment', attachment, row.original);
+    try {
+      const response = await getAttachment(
+        mailboxId,
+        row.original.id,
+        attachment.id
+      );
+
+      const blob = new Blob([response.data], {
+        type: response.headers['content-type'],
+      });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = attachment.filename || 'download';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Error downloading attachment:', err);
     }
   };
 
