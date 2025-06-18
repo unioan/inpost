@@ -184,13 +184,20 @@ function Newtable({
                   </div>
                 )}
               </div>
-              <VscCircleLargeFilled
-                className='text-lg'
-                style={{
-                  color: '#C2E812',
-                  visibility: row.original.seen ? 'hidden' : 'visible',
-                }}
-              />
+              <div className='relative group'>
+                <VscCircleLargeFilled
+                  className='text-lg'
+                  style={{
+                    color: '#C2E812',
+                    visibility: row.original.seen ? 'hidden' : 'visible',
+                  }}
+                />
+                {!row.original.seen && (
+                  <span className='absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap'>
+                    New
+                  </span>
+                )}
+              </div>
               {row.getIsSelected() && (
                 <RiDeleteBin7Fill
                   onClick={() => {
