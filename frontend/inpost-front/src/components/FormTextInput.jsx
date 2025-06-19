@@ -13,7 +13,6 @@ function FormTextInput({
   return (
     <>
       <div className={`relative flex flex-col ${className}`}>
-        {console.log('DEBUG: errors', errors?.[name])}
         <label htmlFor='' className='text-[10px] ml-4 mb-0.5'>
           {label}
         </label>
