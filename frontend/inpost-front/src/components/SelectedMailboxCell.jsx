@@ -18,13 +18,13 @@ function SelectedMailboxCell({
       ) : (
         <div className='h-18 rounded-b-xl flex-1 bg-[#C2E812] flex flex-col justify-center'>
           <div
-            className={`flex items-center group`}
+            className={`flex items-center `}
             onClick={(e) => {
               handleCopy(e, currentMailbox.mailboxAddress);
             }}
             onMouseLeave={handleMouseMoveAway}
           >
-            <p className='hover:bg-slate-50/75 ml-2 truncate whitespace-nowrap overflow-hidden flex items-center px-2 rounded-lg cursor-pointer gap-1'>
+            <p className='group hover:bg-slate-50/75 ml-2 truncate whitespace-nowrap overflow-hidden flex items-center px-2 rounded-lg cursor-pointer gap-1'>
               {currentMailbox.mailboxAddress || 'No mailboxes created'}
               {isCopySelected ? (
                 <FaClipboardCheck className='inline opacity-0 group-hover:opacity-100 transition-opacity duration-200' />
@@ -40,31 +40,6 @@ function SelectedMailboxCell({
       )}
     </>
   );
-}
-
-{
-  /* <p className='ml-4 truncate whitespace-nowrap overflow-hidden'>
-{currentMailbox.mailboxAddress}
-</p> */
-}
-
-{
-  /* <div className='h-18 rounded-b-xl flex-1 bg-[#C2E812] flex flex-col justify-center'>
-  <div
-    className={`flex items-center gap-1 group hover:bg-slate-50 py-1 px-2 rounded-lg`}
-    onClick={(e) => {
-      handleCopy(e, currentMailbox.mailboxAddress);
-    }}
-    onMouseLeave={handleMouseMoveAway}
-  >
-    <span>{currentMailbox.mailboxAddress}</span>
-    {isCopySelected ? (
-      <FaClipboardCheck className='inline opacity-0 group-hover:opacity-100 transition-opacity duration-200' />
-    ) : (
-      <FaRegClipboard className='inline opacity-0 group-hover:opacity-100 transition-opacity duration-200' />
-    )}
-  </div>
-</div>; */
 }
 
 export default SelectedMailboxCell;

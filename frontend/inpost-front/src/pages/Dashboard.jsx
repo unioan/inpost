@@ -97,11 +97,11 @@ function Dashboard() {
             </button>
           </div>
 
-          <div className='flex items-center text-[16px] hover:text-[#C2E812] transition-colors cursor-pointer'>
-            <button
-              className='px-2 py-2 rounded-xl cursor-pointer'
-              onClick={handleLogout}
-            >
+          <div
+            className='flex items-center text-[16px] hover:text-[#C2E812] transition-colors cursor-pointer'
+            onClick={handleLogout}
+          >
+            <button className='px-2 py-2 rounded-xl cursor-pointer'>
               Log out
             </button>
             <ImExit />
