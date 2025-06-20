@@ -115,7 +115,7 @@ function Newtable({
         };
 
         return (
-          <div className='flex flex-row-reverse gap-10 p-2 items-center'>
+          <div className='flex flex-row-reverse gap-3 p-2 items-center'>
             <div className='flex flex-row-reverse items-center gap-3'>
               {loadingList[row.id] ? (
                 <LuLoader className='text-lg animate-spin' />
@@ -135,12 +135,6 @@ function Newtable({
                   </span>
                 </div>
               )}
-              <div className='relative group'>
-                <LuExternalLink className='text-lg' />
-                <span className='absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap'>
-                  Separate tab
-                </span>
-              </div>
             </div>
             <div className='flex flex-row-reverse gap-3'>
               <div className='relative group'>
@@ -218,7 +212,7 @@ function Newtable({
           </div>
         );
       },
-      size: 170,
+      size: 100,
     },
   ];
 
