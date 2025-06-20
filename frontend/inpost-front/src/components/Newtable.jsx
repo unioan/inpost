@@ -38,7 +38,7 @@ function Newtable({
   const [rowSelection, setRowSelection] = useState({});
   const [rowAttachmentShown, setRowAttachmentShown] = useState('');
   const [attachmentsStore, setAttachmentsStore] = useState({});
-  const [isAttachmentsLoading, setAttachmentsLoading] = useState(false);
+
   const [waitAttachmentDownload, setWaitAttachmentDownload] = useState({});
   const isLoadingAttachmentSpinner = (row) => {
     return rowAttachmentShown === row.id && !attachmentsStore[row.id];
@@ -257,13 +257,11 @@ function Newtable({
     });
 
     if (!attachmentsStore[row.id]) {
-      setAttachmentsLoading(true);
       const { attachments } = await getAttachmentsList(mailboxId, row.id);
       setAttachmentsStore((prev) => ({
         ...prev,
         [row.id]: attachments,
       }));
-      setAttachmentsLoading(false);
     }
   };
 
