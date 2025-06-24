@@ -77,7 +77,7 @@ function Dashboard() {
           setCreateMailboxError(null);
           timeoutRef.current = null;
         }, 5000);
-      } else if (type === 'app' && code === 429) {
+      } else if (type === 'app' && code == 429) {
         console.log(
           'DEBUG handleMailboxCreation to many requests',
           type,
