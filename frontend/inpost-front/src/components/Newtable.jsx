@@ -110,7 +110,6 @@ function Newtable({
       id: 'actions',
       cell: ({ row, table }) => {
         const handleToggleExpand = () => {
-          console.log('DEBUG mailboxId: ', mailboxId);
           toggleExpandMessage(row.id, mailboxId);
         };
 
