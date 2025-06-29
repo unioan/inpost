@@ -5,7 +5,7 @@ import {
   getExpandedRowModel,
 } from '@tanstack/react-table';
 import { useState } from 'react';
-import { parseISO, format } from 'date-fns';
+import { formatTime } from '../utils';
 import {
   LuExternalLink,
   LuChevronDown,
@@ -74,9 +74,9 @@ function Newtable({
       header: 'Date',
       cell: (props) => {
         const content = props.getValue();
-        const date = parseISO(content);
-        const formatted = format(date, 'd MMM H:mm');
-        return <p>{formatted}</p>;
+        const date = formatTime(content);
+
+        return <p>{date}</p>;
       },
       size: 110,
     },
