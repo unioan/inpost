@@ -1,21 +1,23 @@
 import { FaChevronRight } from 'react-icons/fa6';
+import { useNavigate } from 'react-router-dom';
 
 function Landing() {
+  const navigate = useNavigate();
+
   return (
     <main>
-      <section className='overflow-hidden w-screen h-screen bg-[radial-gradient(circle,_#E2FF5A_5%,_#C2E812_60%)]'>
-        <div className='w-auto h-screen mx-[86px] text-[32px]'>
+      <section className='overflow-hidden w-screen bg-[radial-gradient(circle,_#E2FF5A_5%,_#C2E812_60%)]'>
+        <div className='w-auto mx-[86px] text-[32px]'>
           <div className=' font-roboto h-[100px] flex justify-center items-center'>
             <p className='font-lato tracking-tight'>INPOST</p>
           </div>
           <dir className='flex'>
-            {/* левая часть */}
             <div className='flex-1 flex flex-col justify-center items-start'>
-              <div className='flex flex-col space-y-[-35px]'>
-                <h1 className='text-[60px] font-semibold'>
+              <div className='flex flex-col xl:space-y-[-20px]'>
+                <h1 className='text-[60px] font-semibold leading-tight'>
                   Temporary mailboxes
                 </h1>
-                <h1 className='text-[60px] pl-[7px] font-semibold'>
+                <h1 className='text-[60px] pl-[7px] font-semibold leading-tight'>
                   for temporary needs
                 </h1>
               </div>
@@ -25,7 +27,12 @@ function Landing() {
                 Instantly receive verification and sign-up links — no spam, no
                 hassle.
               </h2>
-              <button className='ml-[7px] px-3 py-2 bg-black text-[#C2E812] rounded-lg text-lg font-semibold cursor-pointer transition duration-150 active:scale-95'>
+              <button
+                className='ml-[7px] px-3 py-2 bg-black text-[#C2E812] rounded-lg text-lg font-semibold cursor-pointer transition duration-150 active:scale-95'
+                onClick={() => {
+                  navigate('/auth');
+                }}
+              >
                 GET A MAILBOX
               </button>
             </div>
@@ -143,7 +150,12 @@ function Landing() {
                 full-stack implementation to explore how these technologies work
                 together in a real-world development environment.
               </p>
-              <button className='ml-8 px-5 py-2 bg-black text-[#C2E812] rounded-lg text-lg font-semibold cursor-pointer transition duration-150 active:scale-95'>
+              <button
+                className='ml-8 px-5 py-2 bg-black text-[#C2E812] rounded-lg text-lg font-semibold cursor-pointer transition duration-150 active:scale-95'
+                onClick={() => {
+                  navigate('/auth');
+                }}
+              >
                 LOG IN
               </button>
             </div>
