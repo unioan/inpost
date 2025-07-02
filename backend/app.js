@@ -8,12 +8,14 @@ const passport = require('passport')
 const session = require('express-session')
 const cors = require('cors')
 require('./strategies/local-strategy')
+const path = require('path')
 
 app.use(cors({
  origin: 'http://localhost:5173', // your frontend port
  credentials: true               // allow cookies and headers
 }));
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')))
 app.use(session({
  name: "inpost.sid",
  secret: "r#Sg7UH%iR@pdLd0cOzQaThicxGEQ",
