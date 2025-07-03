@@ -31,6 +31,9 @@ app.use(passport.session())
 app.use('/users', usersRoute)
 app.use('/boxes', boxesRouter)
 app.use('/messages', messagesRouter)
+app.all('/{*any}', (req, res, next) => { 
+ res.sendFile(path.join(__dirname, 'public', 'index.html'));
+})
 
 app.use(errorHandler)
 
