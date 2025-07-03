@@ -9,16 +9,21 @@ const session = require('express-session')
 const cors = require('cors')
 require('./strategies/local-strategy')
 const path = require('path')
+require('dotenv').config()
 
-app.use(cors({
- origin: 'http://localhost:5173', // your frontend port
- credentials: true               // allow cookies and headers
-}));
+const SESSION_NAME = process.env.SESSION_NAME
+const SESSION_SECRET = process.env.SESSION_SECRET
+
+// app.use(cors({
+//  origin: 'http://localhost:5173', // your frontend port
+//  credentials: true               // allow cookies and headers
+// }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')))
+
 app.use(session({
- name: "inpost.sid",
- secret: "r#Sg7UH%iR@pdLd0cOzQaThicxGEQ",
+ name: SESSION_NAME,
+ secret: SESSION_SECRET,
  saveUninitialized: false,
  resave: false,
  cookie: {
