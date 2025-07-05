@@ -1,8 +1,8 @@
 import axios from 'axios';
-import.meta.env.VITE_DOMAIN
+import.meta.env.VITE_DOMAIN_URL
 
 const api = axios.create({
- baseURL: `http://${import.meta.env.VITE_DOMAIN}`,
+ baseURL: `${import.meta.env.VITE_DOMAIN_URL}`,
  withCredentials: true,
 });
 
