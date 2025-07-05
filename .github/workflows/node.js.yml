@@ -47,6 +47,7 @@ jobs:
             MAILBOX_MAX_ACTIVE=${{ secrets.MAILBOX_MAX_ACTIVE }}
             SESSION_SECRET=${{ secrets.SESSION_SECRET }}
             SESSION_NAME=${{ secrets.SESSION_NAME }}
+            VITE_DOMAIN=${{ secrets.DOMAIN }}
             EOF
             docker-compose pull
             docker-compose down
