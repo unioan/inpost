@@ -41,13 +41,13 @@ jobs:
           key: ${{ secrets.VM_SSH_KEY }}
           script: |
             cd /var/www/inpost
-              cat <<EOF > .env
-              MONGO_URL=${{ secrets.MONGO_URL }}
-              MAILBOX_EXPIRATION_TIME=${{ secrets.MAILBOX_EXPIRATION_TIME }}
-              MAILBOX_MAX_ACTIVE=${{ secrets.MAILBOX_MAX_ACTIVE }}
-              SESSION_SECRET=${{ secrets.SESSION_SECRET }}
-              SESSION_NAME=${{ secrets.SESSION_NAME }}
-              EOF
-              docker-compose pull
-              docker-compose down
-              docker-compose up -d
+            cat <<EOF > .env
+            MONGO_URL=${{ secrets.MONGO_URL }}
+            MAILBOX_EXPIRATION_TIME=${{ secrets.MAILBOX_EXPIRATION_TIME }}
+            MAILBOX_MAX_ACTIVE=${{ secrets.MAILBOX_MAX_ACTIVE }}
+            SESSION_SECRET=${{ secrets.SESSION_SECRET }}
+            SESSION_NAME=${{ secrets.SESSION_NAME }}
+            EOF
+            docker-compose pull
+            docker-compose down
+            docker-compose up -d
