@@ -17,10 +17,10 @@
 ## 🚀 Features
 
 - User authentication (`/auth`)
-- Mailbox managment pannel (`/dashboard`)
+- Mailbox management panel (`/dashboard`)
   - Create temporary mailboxes
   - Read emails
-- Users and maailboxes list is fetched from MongoDB 
+- Users and mailboxes list is fetched from MongoDB 
 
   
 
