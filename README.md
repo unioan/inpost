@@ -1,4 +1,4 @@
-![Inpost Logo](./assets/inpost_banner@3.webp)
+![Inpost Logo](./assets/readme_banner.webp)
 
 **Inpost** is a web application that allows users to create temporary mailboxes and recive emails.
 
