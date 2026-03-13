@@ -2,7 +2,7 @@
 
 **Inpost** is a web application that allows users to create temporary mailboxes and receive emails.
 
-🔗 **Live demo:** [https://inpost.wallte.one](https://inpost.wallte.one)  
+🔗 **Live demo:** [https://inpost.valdi.sarl](https://inpost.valdi.sarl)  
 
 ## 🛠️ Tech Stack
 
